@@ -27,7 +27,6 @@ public class StartScreen extends AppCompatActivity {
     }
 
     public void newGameClicked() {
-        newGame.setText("Button clicked.");
         Intent i = new Intent(getApplicationContext(), GameScreen.class);
         startActivity(i);
     }

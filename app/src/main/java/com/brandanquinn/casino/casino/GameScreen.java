@@ -5,18 +5,23 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.brandanquinn.casino.model.Card;
+import com.brandanquinn.casino.model.Deck;
 
 import org.w3c.dom.Text;
 
 public class GameScreen extends AppCompatActivity {
+    private Deck gameDeck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_screen);
 
-        Card newCard = new Card('H', 'A');
+        this.gameDeck = new Deck();
+
         TextView roundNum = findViewById(R.id.roundNumber);
-        roundNum.setText(newCard.getCardString());
+
+        roundNum.setText(this.gameDeck.drawCard().getCardString());
+
     }
 }
