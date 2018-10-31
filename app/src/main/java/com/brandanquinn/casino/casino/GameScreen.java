@@ -20,8 +20,10 @@ public class GameScreen extends AppCompatActivity {
         this.gameDeck = new Deck();
 
         TextView roundNum = findViewById(R.id.roundNumber);
+        TextView playerScore = findViewById(R.id.humanScore);
 
         roundNum.setText(this.gameDeck.drawCard().getCardString());
+        playerScore.setText(Integer.toString(this.gameDeck.getNumCardsLeft()));
 
     }
 }
