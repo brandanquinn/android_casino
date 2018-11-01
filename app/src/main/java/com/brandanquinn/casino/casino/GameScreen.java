@@ -21,33 +21,75 @@ public class GameScreen extends AppCompatActivity {
     private Deck gameDeck;
     private Display gameDisplay;
     private Table gameTable;
+    private ArrayList<Player> gamePlayers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_screen);
 
+        // Initialize private member variables.
         this.gameDeck = new Deck();
         this.gameDisplay = new Display(this);
         this.gameTable = new Table();
+        this.gamePlayers = new ArrayList<>();
+        this.gamePlayers.add(new Player());
+        this.gamePlayers.add(new Player());
 
-        TextView roundNum = findViewById(R.id.roundNumber);
-        TextView playerScore = findViewById(R.id.humanScore);
-
-
-        ArrayList<Player> gamePlayers = new ArrayList<>();
-        gamePlayers.add(new Player());
-        gamePlayers.add(new Player());
-
-        for (int i = 0; i < 4; i++) {
-            gamePlayers.get(0).addToHand(this.gameDeck.drawCard());
-        }
-
-        for (int i = 0; i < 4; i++) {
-            gamePlayers.get(1).addToHand(this.gameDeck.drawCard());
-        }
+        dealHands();
+        dealToTable();
 
         gameDisplay.updateView(gamePlayers, this.gameTable);
 
+    }
+
+    /*
+    Function Name: dealHands
+    Purpose: Properly deals cards to each player
+    Parameters: None
+    Return Value: None
+    Local Variables:
+        Card newCard, Card drawn from top of deck
+    Algorithm:
+        1. Deal 4 cards to Human Player
+        2. Deal 4 cards to Computer Player
+    Assistance Received: None
+     */
+    public void dealHands() {
+        for (int i = 0; i < 4; i++) {
+            Card newCard = this.gameDeck.drawCard();
+            if (newCard.getIsRealCard()) {
+                this.gamePlayers.get(0).addToHand(newCard);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            Card newCard = this.gameDeck.drawCard();
+            if (newCard.getIsRealCard()) {
+                this.gamePlayers.get(1).addToHand(newCard);
+            }
+        }
+    }
+
+    /*
+    Function Name: dealToTable
+    Purpose: Deals cards to table
+    Parameters: None
+    Return Value: None
+    Local Variables:
+        Card newCard, Card drawn from top of deck.
+    Algorithm:
+        1. For integers [0, 4)
+            a. Draw card from deck and store as newCard
+            b. If newCard is a real card:
+                - Add newCard to table cards
+     */
+    public void dealToTable() {
+        for (int i = 0; i < 4; i++) {
+            Card newCard = this.gameDeck.drawCard();
+            if (newCard.getIsRealCard()) {
+                this.gameTable.addToTableCards(newCard);
+            }
+        }
     }
 }

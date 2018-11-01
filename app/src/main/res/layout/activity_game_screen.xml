@@ -65,7 +65,7 @@
 
     <LinearLayout
         android:id="@+id/tableGrid"
-        android:layout_width="790dp"
+        android:layout_width="785dp"
         android:layout_height="362dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
