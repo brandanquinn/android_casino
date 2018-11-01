@@ -1,6 +1,7 @@
 package com.brandanquinn.casino.model;
 
 import android.util.Pair;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -115,6 +116,30 @@ public class Player {
     */
     public ArrayList<Card> getHand() {
         return this.hand;
+    }
+
+    /*
+    Function Name: getHandString
+    Purpose: Generates a stringified hand for the player
+    Parameters: None
+    Return Value: Stringified hand
+    Local Variables
+        String handStr, variable to add each card string to
+    Algorithm:
+        1. Init handOfCardStrings
+        2. For each card in player's hand:
+            a. Add card string to handOfCardStrings
+        3. Return handOfCardStrings
+    Assistance Received: None
+     */
+    public String getHandString() {
+        String handString = " ";
+
+        for (int i = 0; i < hand.size(); i++) {
+            handString += hand.get(i).getCardString();
+        }
+
+        return handString;
     }
 
     /*

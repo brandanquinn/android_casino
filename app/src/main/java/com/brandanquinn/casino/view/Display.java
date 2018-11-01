@@ -1,13 +1,19 @@
 package com.brandanquinn.casino.view;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.brandanquinn.casino.casino.AppContextProvider;
 import com.brandanquinn.casino.casino.R;
@@ -15,17 +21,20 @@ import com.brandanquinn.casino.model.Card;
 import com.brandanquinn.casino.model.Player;
 import com.brandanquinn.casino.model.Table;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Display {
-    public Display() {
-        this.currentButtons = new ArrayList<>();
-        this.appContext = AppContextProvider.getAppContext();
+    public Display(Context context) {
+        this.currentHumanButtons = new ArrayList<>();
+        this.appContext = context;
+
     }
 
     public ArrayList<ImageButton> getCurrentButtons() {
-        return this.currentButtons;
+        return this.currentHumanButtons;
     }
 
     /*
@@ -59,21 +68,21 @@ public class Display {
         ArrayList<Card> computerHand = gamePlayers.get(1).getHand();
 
         // Gets the view of the game screen for manipulation
-        View appView = View.inflate(appContext, R.layout.activity_game_screen, null);
+//        View appView = View.inflate(appContext, R.layout.activity_game_screen, null);
 
-        GridLayout humanGrid = appView.findViewById(R.id.humanHand);
+        LinearLayout humanGrid = ((Activity)appContext).findViewById(R.id.humanHand);
+        LinearLayout computerGrid = ((Activity)appContext).findViewById(R.id.computerHand);
 
-
-//        GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(GridLayout.spec(GridLayout.UNDEFINED, 1));
-
-        ImageButton cardBtn = createButton(humanHand.get(0));
-
-        // Look into changing to a GridView
 
         for (int i = 0; i < humanHand.size(); i++) {
-            humanGrid.addView(createButton(humanHand.get(i)));
+            ImageButton cardBtn = createButton(humanHand.get(i));
+            humanGrid.addView(cardBtn);
         }
 
+        for (int i = 0; i < computerHand.size(); i++) {
+            ImageButton cardBtn = createButton(computerHand.get(i));
+            computerGrid.addView(cardBtn);
+        }
     }
 
     /*
@@ -97,12 +106,14 @@ public class Display {
 
         // Setting ImageButton to proper card image
         cardBtn.setImageResource(imageID);
+        cardBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        cardBtn.setLayoutParams(new LinearLayout.LayoutParams(150, 200));
 
-        this.currentButtons.add(cardBtn);
+        this.currentHumanButtons.add(cardBtn);
 
         return cardBtn;
     }
 
-    private ArrayList<ImageButton> currentButtons;
+    private ArrayList<ImageButton> currentHumanButtons;
     private Context appContext;
 }

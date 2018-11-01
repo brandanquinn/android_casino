@@ -173,7 +173,7 @@ public class Card {
     Assistance Received: None
      */
     public String getImageResourceName() {
-        return " " + Character.toLowerCase(getSuit()) + "_" + getType() + ".png";
+        return "" + Character.toLowerCase(getSuit()) + "_" + Character.toLowerCase(getType());
     }
 
     /*

@@ -67,7 +67,8 @@ public class Deck {
         }
 
         Card cardDrawn = this.topOfDeck;
-        gameDeck.remove(0);
+        gameDeck.remove(cardDrawn);
+        this.topOfDeck = gameDeck.get(0);
         return cardDrawn;
     }
 

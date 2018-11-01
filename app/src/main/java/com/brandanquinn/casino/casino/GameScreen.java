@@ -28,7 +28,7 @@ public class GameScreen extends AppCompatActivity {
         setContentView(R.layout.activity_game_screen);
 
         this.gameDeck = new Deck();
-        this.gameDisplay = new Display();
+        this.gameDisplay = new Display(this);
         this.gameTable = new Table();
 
         TextView roundNum = findViewById(R.id.roundNumber);
@@ -43,11 +43,11 @@ public class GameScreen extends AppCompatActivity {
             gamePlayers.get(0).addToHand(this.gameDeck.drawCard());
         }
 
+        for (int i = 0; i < 4; i++) {
+            gamePlayers.get(1).addToHand(this.gameDeck.drawCard());
+        }
+
         gameDisplay.updateView(gamePlayers, this.gameTable);
 
-    }
-
-    public Context getViewContext() {
-        return this;
     }
 }
