@@ -164,6 +164,19 @@ public class Card {
     }
 
     /*
+    Function Name: getImageResourceName
+    Purpose: Get a string for each card that matches the naming scheme for the drawable resources
+    Parameters: None
+    Return Value: String in the form: "suit_type.png"
+    Local Variables: None
+    Algorithm: None
+    Assistance Received: None
+     */
+    public String getImageResourceName() {
+        return " " + Character.toLowerCase(getSuit()) + "_" + getType() + ".png";
+    }
+
+    /*
 	Function Name: getLockedToBuild
 	Purpose: Getter for lockedToBuild private member variable.
 	Parameters: None
