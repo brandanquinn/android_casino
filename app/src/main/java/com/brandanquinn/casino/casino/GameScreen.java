@@ -85,7 +85,7 @@ public class GameScreen extends AppCompatActivity {
                 - Add newCard to table cards
      */
     public void dealToTable() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 10; i++) {
             Card newCard = this.gameDeck.drawCard();
             if (newCard.getIsRealCard()) {
                 this.gameTable.addToTableCards(newCard);

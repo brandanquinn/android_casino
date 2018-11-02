@@ -245,9 +245,27 @@ public class Table {
         return flatList;
     }
 
-//    public String getTableString() {
-//
-//    }
+    /*
+    Function Name: getTableString
+    Purpose: Generate a stringified representation of the current game table
+    Parameters: None
+    Return Value: Table object as string
+    Local Variables:
+        String tableStr, String variable used to concatenate build and card strings
+    Algorithm:
+        1. Init tableStr
+        2. For each build in currentBuilds:
+            a. Add build string to tableStr
+        3. For each card in loose table cards:
+            a. Add card string to tableStr
+        4. Return tableStr
+    Assistance Received: None
+     */
+    public String getTableString() {
+        String tableStr = "";
+
+        return tableStr;
+    }
 
     /*
 	Function Name: removeCardFromVector

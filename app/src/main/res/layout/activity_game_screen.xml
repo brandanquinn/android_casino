@@ -8,170 +8,108 @@
     tools:context=".GameScreen">
 
 
-    <TextView
-        android:id="@+id/computerScore"
-        android:layout_width="165dp"
-        android:layout_height="102dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="120dp"
-        android:layout_marginRight="120dp"
-        android:layout_marginBottom="16dp"
-        android:text="0"
-        android:textColor="#7bb3ff"
-        android:textSize="30dp"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/computerScoreLabel"
-        app:layout_constraintVertical_bias="0.0" />
-
     <LinearLayout
         android:id="@+id/humanHand"
-        android:layout_width="785dp"
-        android:layout_height="224dp"
+        android:layout_width="780dp"
+        android:layout_height="180dp"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.1"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_weight="0.1"
         android:background="#493267"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.657"></LinearLayout>
+        app:layout_constraintVertical_bias="0.83"></LinearLayout>
 
     <LinearLayout
-        android:background="#493267"
         android:id="@+id/computerHand"
-        android:layout_width="785dp"
-        android:layout_height="224dp"
+        android:layout_width="780dp"
+        android:layout_height="180dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:background="#493267"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/tableGrid"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/tableGrid"
-        android:layout_width="785dp"
-        android:layout_height="362dp"
+        android:layout_width="1268dp"
+        android:layout_height="180dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="236dp"
+        android:layout_marginTop="204dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="#493267"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
     <TextView
-        android:id="@+id/humanScoreLabel"
-        android:layout_width="167dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="948dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Human Score"
-        android:textAlignment="center"
-        android:textColor="#7bb3ff"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toStartOf="@+id/roundNumberLabel"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/computerScoreLabel"
-        android:layout_width="167dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="948dp"
-        android:layout_marginEnd="120dp"
-        android:layout_marginRight="120dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Computer Score"
-        android:textAlignment="center"
-        android:textColor="#7bb3ff"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/humanScore"
-        android:layout_width="165dp"
-        android:layout_height="89dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
+        android:layout_width="169dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="800dp"
+        android:layout_marginLeft="800dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="44dp"
         android:text="0"
+        android:textAlignment="center"
         android:textColor="#7bb3ff"
         android:textSize="30dp"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/humanScoreLabel"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923" />
 
     <TextView
         android:id="@+id/roundNumberLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="948dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Round Number"
         android:textAlignment="center"
         android:textColor="#7bb3ff"
         android:textSize="18dp"
-        app:layout_constraintEnd_toStartOf="@+id/computerScoreLabel"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/roundNumber"
-        android:layout_width="230dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="1"
-        android:textAlignment="center"
-        android:textColor="#7bb3ff"
-        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.453"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roundNumberLabel" />
+        app:layout_constraintHorizontal_bias="0.703"
+        app:layout_constraintStart_toEndOf="@+id/computerHand"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/captureButton"
         android:layout_width="105dp"
         android:layout_height="72dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="#493267"
@@ -181,14 +119,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.786" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/buildButton"
         android:layout_width="103dp"
         android:layout_height="71dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="#493267"
@@ -198,14 +136,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/captureButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.786" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/trailButton"
         android:layout_width="106dp"
         android:layout_height="71dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="#493267"
@@ -215,14 +153,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buildButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.785" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/increaseButton"
         android:layout_width="109dp"
         android:layout_height="71dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="#493267"
@@ -232,7 +170,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/trailButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.785" />
+        app:layout_constraintVertical_bias="0.998" />
 
     <Button
         android:id="@+id/helpButton"
@@ -249,7 +187,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/saveButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.786" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/saveButton"
@@ -266,7 +204,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/increaseButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.785" />
+        app:layout_constraintVertical_bias="0.998" />
 
     <TextView
         android:id="@+id/debugBox"
@@ -276,15 +214,94 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
-        android:textSize="18dp"
         android:textColor="#7bb3ff"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.453"
+        app:layout_constraintHorizontal_bias="0.952"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/humanScoreLabel"
+        android:layout_width="167dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="804dp"
+        android:layout_marginLeft="804dp"
+        android:layout_marginTop="476dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Human Score"
+        android:textAlignment="center"
+        android:textColor="#7bb3ff"
+        android:textSize="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/computerScore"
+        android:layout_width="167dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginRight="132dp"
+        android:layout_marginBottom="8dp"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="#7bb3ff"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/humanScore"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.868" />
+
+    <TextView
+        android:id="@+id/computerScoreLabel"
+        android:layout_width="167dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Computer Score"
+        android:textAlignment="center"
+        android:textColor="#7bb3ff"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/humanScoreLabel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.787" />
+
+    <TextView
+        android:id="@+id/roundNumber"
+        android:layout_width="230dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="916dp"
+        android:layout_marginLeft="916dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="1"
+        android:textAlignment="center"
+        android:textColor="#7bb3ff"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.42"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/roundNumberLabel"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>

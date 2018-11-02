@@ -129,10 +129,10 @@ public class Display {
 
         // Max width of table is 785 dp
         if (layoutId == "tableCards" && numCards > 4) {
-            int width = 785 / numCards;
-            cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 200));
+            int width = 1268 / numCards;
+            cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
         } else {
-            cardBtn.setLayoutParams(new LinearLayout.LayoutParams(150, 200));
+            cardBtn.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
         }
 
 
