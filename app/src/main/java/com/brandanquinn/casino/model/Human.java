@@ -2,6 +2,8 @@ package com.brandanquinn.casino.model;
 
 import android.util.Pair;
 
+import java.util.ArrayList;
+
 public class Human extends Player {
 
     /*
@@ -14,7 +16,8 @@ public class Human extends Player {
     Assistance Received: None
     */
     public Human() {
-
+        setScore(0);
+        setPlayerString("Human");
     }
 
     /*
@@ -28,7 +31,8 @@ public class Human extends Player {
     Assistance Received: None
     */
     public Human(int score) {
-
+        setScore(score);
+        setPlayerString("Human");
     }
 
     /*
@@ -55,7 +59,31 @@ public class Human extends Player {
     */
     public Pair<Card, Character> play() {
         Pair<Card, Character> movePair = new Pair<>(new Card(), 't');
+        char moveOption = ' ';
+        ArrayList<Card> playerHand = getHand();
+
+
 
         return movePair;
+    }
+
+    /*
+    Function Name: getCardIndex
+    Purpose: Prompt user for index of card selected for play function
+    Parameters:
+        char moveType, Used to print proper message for move type
+    Return Value: Integer value input by user, validated within function
+    Local Variables:
+        int card_num, Used to keep track of user input
+    Algorithm:
+        1. Initialize local variables
+        2. While user hasn't input valid card index
+            a. Print message based on moveType
+            b. If user inputs invalid index, print error message.
+        3. Return cardNum - 1 to account for array indexing.
+    Assistance Received: None
+    */
+    private int getCardIndex(char moveType) {
+        return 0;
     }
 }

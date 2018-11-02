@@ -30,6 +30,7 @@ public class Display {
     public Display(Context context) {
         this.currentButtons = new ArrayList<>();
         this.appContext = context;
+        this.gameActivity = (Activity)this.appContext;
 
     }
 
@@ -41,14 +42,19 @@ public class Display {
         Function Name: updateView
         Purpose: Dynamically update the view based on the model.
         Parameters:
+            ArrayList<Player> gamePlayers, Players of the game
+            Table gameTable, table object containing all cards/builds on the table
+            int roundNum, integer value to display round number
         Return Value:
         Local Variables:
         Algorithm:
         Assistance Received:
          */
-    public void updateView(ArrayList<Player> gamePlayers, Table gameTable) {
+    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
 
         displayCards(gamePlayers, gameTable);
+        displayRoundNum(roundNum);
+        displayScores(gamePlayers);
     }
 
     /*
@@ -72,9 +78,9 @@ public class Display {
         // Gets the view of the game screen for manipulation
 //        View appView = View.inflate(appContext, R.layout.activity_game_screen, null);
 
-        LinearLayout humanGrid = ((Activity)appContext).findViewById(R.id.humanHand);
-        LinearLayout computerGrid = ((Activity)appContext).findViewById(R.id.computerHand);
-        LinearLayout tableGrid = ((Activity)appContext).findViewById(R.id.tableGrid);
+        LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
+        LinearLayout computerGrid = this.gameActivity.findViewById(R.id.computerHand);
+        LinearLayout tableGrid = this.gameActivity.findViewById(R.id.tableGrid);
 
 
         for (int i = 0; i < humanHand.size(); i++) {
@@ -125,7 +131,7 @@ public class Display {
         cardBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
 
-        TextView debug = ((Activity)appContext).findViewById(R.id.debugBox);
+        TextView debug = this.gameActivity.findViewById(R.id.debugBox);
 
         // Max width of table is 785 dp
         if (layoutId == "tableCards" && numCards > 4) {
@@ -142,6 +148,45 @@ public class Display {
         return cardBtn;
     }
 
+    /*
+    Function Name: displayRoundNum
+    Purpose: Update the round number TextView in view
+    Parameters:
+        int roundNum, current round number
+    Return Value: None
+    Local Variables:
+        TextView roundNumDisplay, TextView to update with current round number
+    Algorithm:
+        1. Init roundNumDisplay
+        2. Set text to stringified roundNum
+    Assistance Received: None
+     */
+    public void displayRoundNum(int roundNum) {
+        TextView roundNumDisplay = this.gameActivity.findViewById(R.id.roundNumber);
+
+        roundNumDisplay.setText(Integer.toString(roundNum));
+    }
+
+    /*
+    Function Name: displayScores
+    Purpose: Update each player's score in view
+    Parameters:
+        ArrayList<Player> gamePlayers, Players of the game
+    Return Value: None
+    Local Variables:
+    Algorithm:
+     */
+    public void displayScores(ArrayList<Player> gamePlayers) {
+        // Set human score
+        TextView humanScoreDisplay = this.gameActivity.findViewById(R.id.humanScore);
+        humanScoreDisplay.setText(Integer.toString(gamePlayers.get(0).getScore()));
+
+        // Set computer score
+        TextView compScoreDisplay = this.gameActivity.findViewById(R.id.computerScore);
+        compScoreDisplay.setText(Integer.toString(gamePlayers.get(1).getScore()));
+    }
+
     private ArrayList<ImageButton> currentButtons;
+    private Activity gameActivity;
     private Context appContext;
 }
