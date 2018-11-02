@@ -1,20 +1,19 @@
 package com.brandanquinn.casino.model;
 
-import android.util.Pair;
-import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
 
 public class Player {
-    /*
-    Function Name: Player
-    Purpose: Default constructor for Player class
-    Parameters: None
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    private int score;
+    private ArrayList<Card> hand;
+    private ArrayList<Card> pile;
+    private Table gameTable;
+    private boolean isPlaying;
+    private String playerString;
+    private boolean capturedLast;
+
+    /**
+     * Default constructor for Player class.
+     */
     public Player() {
         setScore(0);
         setIsPlaying(false);
@@ -23,114 +22,65 @@ public class Player {
         this.pile = new ArrayList<>();
     }
 
-    /*
-    Function Name: getScore
-    Purpose: Getter for score private member variable
-    Parameters: None
-    Return Value: Integer value representing player score
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for score private member variable.
+     * @return int score of player
+     */
     public int getScore() {
         return this.score;
     }
 
-    /*
-    Function Name: setScore
-    Purpose: Setter for score private member variable
-    Parameters:
-        int score, Variable to set score to
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Setter for score private member variable.
+     * @param score, int score of player
+     */
     public void setScore(int score) {
         this.score = score;
     }
 
-    /*
-    Function Name: addToHand
-    Purpose: Adds a new card to player's hand
-    Parameters:
-        Card newCard, card obj pointer to add to hand private member variable.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Used to add a new Card object to the player's hand.
+     * @param newCard, Card object to be added.
+     */
     public void addToHand(Card newCard) {
         this.hand.add(newCard);
     }
 
-    /*
-    Function Name: addToPile
-    Purpose: Adds captured cards to player pile
-    Parameters:
-        ArrayList<Card> capturedCards, Cards captured by player to be added to their pile
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Adds a list of captured cards to the player's pile.
+     * @param capturedCards, ArrayList of Card objects to be added.
+     */
     public void addToPile(ArrayList<Card> capturedCards) {
-
+        this.pile.addAll(capturedCards);
     }
 
-    /*
-    Function Name: getPile
-    Purpose: Getter for pile private member variable
-    Parameters: None
-    Return Value: vector of cards in the player's current pile
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for pile private member variable.
+     * @return ArrayList of Card objects in player's pile.
+     */
     public ArrayList<Card> getPile() {
         return this.pile;
     }
 
-    /*
-    Function Name: discard
-    Purpose: Discard selected card from player's hand
-    Parameters:
-        Card removedCard, Card played in move to be removed from hand in model.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Remove a card played from the player's hand.
+     * @param removedCard
+     */
     public void discard(Card removedCard) {
-
+        this.hand.remove(removedCard);
     }
 
-    /*
-    Function Name: getHand
-    Purpose: Getter for hand private member variable
-    Parameters: None
-    Return Value: vector of cards in player's hand
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for hand private member variable.
+     * @return ArrayList of Card objects in player's hand.
+     */
     public ArrayList<Card> getHand() {
         return this.hand;
     }
 
-    /*
-    Function Name: getHandString
-    Purpose: Generates a stringified hand for the player
-    Parameters: None
-    Return Value: Stringified hand
-    Local Variables
-        String handStr, variable to add each card string to
-    Algorithm:
-        1. Init handOfCardStrings
-        2. For each card in player's hand:
-            a. Add card string to handOfCardStrings
-        3. Return handOfCardStrings
-    Assistance Received: None
+    /**
+     * Stringified version of player's hand for serialization / logging purposes.
+     * @return String of Cards in player's hand.
      */
     public String getHandString() {
         String handString = " ";
@@ -142,177 +92,106 @@ public class Player {
         return handString;
     }
 
-    /*
-    Function Name: clearHand
-    Purpose: Clears all cards from player's hand.
-    Parameters: None
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Clears player's hand of all cards.
+     */
     public void clearHand() {
-
+        this.hand.clear();
     }
 
-    /*
-    Function Name: clearPile
-    Purpose: Clears all cards from player's pile
-    Parameters: None
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Clears player's pile of all cards.
+     */
     public void clearPile() {
         this.pile.clear();
     }
 
-    /*
-    Function Name: handIsEmpty
-    Purpose: Used to check if player's hand is currently empty for round ending state / drawing purposes
-    Parameters: None
-    Return Value: Whether or not the players hand is empty represented as a boolean value.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Checks whether player's hand is empty or not.
+     * @return boolean value to represent above.
+     */
     public boolean handIsEmpty() {
         return this.hand.isEmpty();
     }
 
-    /*
-    Function Name: setIsPlaying
-    Purpose: Setter for isPlaying private member variable
-    Parameters:
-        bool isPlaying, Boolean value representing whether player is currently playing or not.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Setter for isPlaying private member variable
+     * @param isPlaying, boolean value representing whether or not player is currently playing.
+     */
     public void setIsPlaying(boolean isPlaying) {
         this.isPlaying = isPlaying;
     }
 
-    /*
-    Function Name: getIsPlaying
-    Purpose: Getter for isPlaying private member variable
-    Parameters: None
-    Return Value: Boolean value representing whether player is currently playing or not.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for isPlaying private member variable.
+     * @return boolean value representing whether or not player is currently playing.
+     */
     public boolean getIsPlaying() {
         return this.isPlaying;
     }
 
-    /*
-    Function Name: setHand
-    Purpose: Setter for hand private member variable, used in serialization
-    Parameters:
-        ArrayList<Card> hand, vector of cards to set hand to.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Sets a player's hand to preloaded list of cards
+     * @param hand, ArrayList of Card objects used to set hand to.
+     */
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
     }
 
-    /*
-    Function Name: setPile
-    Purpose: Setter for pile private member variable, used in serialization
-    Parameters:
-        ArrayList<Card> pile, vector of cards to set pile to.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Sets a player's pile to preloaded list of cards
+     * @param pile, ArrayList of Card objects to set pile to.
+     */
     public void setPile(ArrayList<Card> pile) {
         this.pile = pile;
     }
 
-    /*
-    Function Name: setPlayerString
-    Purpose: Setter for player_string private member variable
-    Parameters:
-        string playerString, String to keep track of whether player is Human or Computer.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Setter for playerString private member variable
+     * @param playerString, String representing if player is Human / Computer.
+     */
     public void setPlayerString(String playerString) {
         this.playerString = playerString;
     }
 
-    /*
-    Function Name: getPlayerString
-    Purpose: Getter for playerString private member variable
-    Parameters: None
-    Return Value: Returns a string to keep track of whether player is Human or Computer.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for playerString private member variable
+     * @return String representing if player is Human / Computer.
+     */
     public String getPlayerString() {
         return this.playerString;
     }
 
-    /*
-    Function Name: getGameTable
-    Purpose: Getter for game_table private member variable.
-    Parameters: None
-    Return Value: Returns a pointer to the current game table.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for gameTable private member variable
+     * @return Table object for all cards / builds on the table.
+     */
     public Table getGameTable() {
         return this.gameTable;
     }
 
-    /*
-    Function Name: setGameTable
-    Purpose: Setter for game_table private member variable
-    Parameters:
-        Table* gameTable, Pointer to the current game table object.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Setter for gameTable private member variable
+     * @param gameTable, Table object for all cards / builds on the table.
+     */
     public void setGameTable(Table gameTable) {
         this.gameTable = gameTable;
     }
 
-    /*
-    Function Name: getCapturedLast
-    Purpose: Getter for capturedLast private member variable
-    Parameters: None
-    Return Value: Boolean value to determine which player captured last.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Getter for capturedLast private member variable
+     * @return boolean value representing whether or not player captured last.
+     */
     public boolean getCapturedLast() {
         return this.capturedLast;
     }
 
+    /**
+     * Setter for capturedLast private member variable.
+     * @param capturedLast, boolean value representing whether or not player captured last.
+     */
     public void setCapturedLast(boolean capturedLast) {
         this.capturedLast = capturedLast;
     }
-
-    private int score;
-    private ArrayList<Card> hand;
-    private ArrayList<Card> pile;
-    private Table gameTable;
-    private boolean isPlaying;
-    private String playerString;
-    private boolean capturedLast;
 
 }

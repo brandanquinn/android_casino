@@ -4,91 +4,54 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Table {
-    /*
-	Function Name: Table
-	Purpose: Default constructor for Table class
-	Parameters: None
-	Return Value: None
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
+
+    private ArrayList<ArrayList<Card>> totalTableCards;
+    private ArrayList<Card> tableCards;
+    private ArrayList<ArrayList<Card>> tableBuilds;
+//    private ArrayList<Build> currentBuilds;
+
+    /**
+     * Default constructor for Table class.
+     */
     public Table() {
         totalTableCards = new ArrayList<>();
         tableBuilds = new ArrayList<>();
         tableCards = new ArrayList<>();
     }
 
-    /*
-	Function Name: Table
-	Purpose: Overloaded constructor for Table class; used in deserialization
-	Parameters:
-		ArrayList<Card> tableCards, vector of cards to add to the table
-		ArrayList<Build> currentBuilds, vector of builds on the table
-	Return Value: None
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
+    /**
+     * Overloaded Table constructor used in deserialization
+     */
 //    public Table(ArrayList<Card> tableCards, ArrayList<Build> currentBuilds) {
 //
 //    }
 
-    /*
-	Function Name: getTableCards
-	Purpose: Getter for table_cards private member variables
-	Parameters: None
-	Return Value: Vector of loose table cards
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
+    /**
+     * Getter for tableCards private member variable.
+     * @return
+     */
     public ArrayList<Card> getTableCards() {
         return this.tableCards;
     }
 
-    /*
-	Function Name: getTotalTableCards
-	Purpose: Gets a 2d vector of loose table cards and cards from builds
-	Parameters: None
-	Return Value: 2d vector of ALL table cards
-	Local Variables:
-		ArrayList<ArrayList<Card>> tempVec, vector to hold all table cards
-	Algorithm:
-		1. Initialize tempVec to hold tableBuild member variable
-		2. Add loose table cards to tempVec
-		3. Return tempVec
-	Assistance Received: None
-	*/
+    /**
+     * Combines loose tableCards list with tableBuilds list to get full list of cards on the table.
+     * @return 2d ArrayList of all cards on the table.
+     */
     public ArrayList<ArrayList<Card>> getTotalTableCards() {
         return this.totalTableCards;
     }
 
-    /*
-	Function Name: addToTableCards
-	Purpose: Checks whether card is part of a build or not and adds it to proper container
-	Parameters:
-		Card* new_card, card to be added to table
-	Return Value: None
-	Local Variables:
-		ArrayList<Card> buildBuddies, Vector of cards in a build
-	Algorithm:
-		1. If newCard is part of a build:
-			a. Get its buildBuddies
-			b. For each card in buildBuddies
-				i. Remove it from loose table cards vector
-			c. If buildBuddies aren't part of a build on the table
-				a. Add them to known table builds
-		2. Else
-			a. Add newCard to loose table cards.
-	Assistance Received: None
-	*/
+    /**
+     * Used to add a card to the table, if card is part of a build it will evaluate where it should be placed within the tableBuilds list
+     * @param newCard, Card object to be added to the table.
+     */
     public void addToTableCards(Card newCard) {
         if (newCard.getPartOfBuild()) {
             ArrayList<Card> buildBuddies = newCard.getBuildBuddies();
 
             for (int i = 0; i < buildBuddies.size(); i++) {
-                removeCardFromVector(this.tableCards, buildBuddies.get(i));
+                this.tableCards.remove(buildBuddies.get(i));
             }
 
             if (!doesBuildExist(buildBuddies)) {
@@ -102,85 +65,45 @@ public class Table {
         }
     }
 
-    /*
-	Function Name: clearTableCards
-	Purpose: Remove loose cards from table
-	Parameters: None
-	Return Value: None
-	Local Variables: None
-	Algorithm: Clear table cards vector
-	Assistance Received: None
-	*/
+    /**
+     * Clears loose table cards.
+     */
     public void clearTableCards() {
         this.tableCards.clear();
     }
 
-    /*
-	Function Name: removeCards
-	Purpose: Remove cards from loose table cards vector
-	Parameters:
-		ArrayList<Card> cardsToRemove, Cards to remove from table
-	Return Value: None
-	Local Variables: None
-	Algorithm:
-		1. For each card in cardsToRemove:
-			a. Remove card from loose table cards vector
-	Assistance Received: None
-	*/
+    /**
+     * Removes a list of cards from tableCards list, used for set capture.
+     * @param cardsToRemove, ArrayList of Card objects to remove
+     */
     public void removeCards(ArrayList<Card> cardsToRemove) {
         for (int i = 0; i < cardsToRemove.size(); i++) {
-            removeCardFromVector(this.tableCards, cardsToRemove.get(i));
+            this.tableCards.remove(cardsToRemove.get(i));
         }
     }
 
-    /*
-	Function Name: removeSets
-	Purpose: Remove sets of cards from loose table cards vector
-	Parameters:
-		ArrayList<ArrayList<Card>> setsToRemove, sets to remove from table
-	Return Value: None
-	Local Variables: None
-	Algorithm:
-		1. For each set to remove:
-			a. Call removeCards(set)
-	Assistance Received: None
-	*/
+    /**
+     * Removes multiple sets of cards by calling removeCards on each individual set.
+     * @param setsToRemove, 2d ArrayList of Card objects to remove.
+     */
     public void removeSets(ArrayList<ArrayList<Card>> setsToRemove) {
         for (int i = 0; i < setsToRemove.size(); i++) {
             removeCards(setsToRemove.get(i));
         }
     }
 
-    /*
-	Function Name: removeBuilds
-	Purpose: Remove captured builds from table
-	Parameters:
-		vector<Build*> buildsToRemove, builds from remove from table
-	Return Value: None
-	Local Variables:
-		vector<vector<Card*> tempBuildCards, temp 2d vec to hold build cards
-	Algorithm:
-		1. For each build to remove:
-			a. Get total build cards
-			b. For each vector of cards in total build cards:
-				i. Remove card from tableBuilds
-		2. For each build to remove:
-			a. Delete build object from currentBuilds vector
-	Assistance Received: None
-	*/
+    /**
+     * Used to remove captured builds from the table.
+     * describe param when finished
+     */
 //    public void removeBuilds(ArrayList<Build> buildsToRemove) {
 //
 //    }
 
-    /*
-	Function Name: isEmpty
-	Purpose: Check if there are no loose table cards
-	Parameters: None
-	Return Value: Boolean value that represents whether or not there are loose table cards.
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
+    /**
+     * Gets whether the loose tableCards list is empty or not.
+     * @return Boolean value representing whether or not the tableCards list is empty.
+     */
     public boolean isEmpty() {
         return this.tableCards.isEmpty();
     }
@@ -212,23 +135,10 @@ public class Table {
 //
 //    }
 
-    /*
-	Function Name: getFlattenedCardList
-	Purpose: Generates a single vector of all cards on the table
-	Parameters: None
-	Return Value: Vector of ALL table cards
-	Local Variables:
-		ArrayList<Card> flatList, Vector of all table cards to be returned
-	Algorithm:
-		1. Initialize flatList
-		2. For each set of cards in tableBuilds:
-			a. For each card in the set:
-				i. Add card to flatList
-		3. For each loose card on the table
-			a. Add card to flatList
-		4. Return flatList
-	Assistance Received: None
-	*/
+    /**
+     * Breaks down 2d lists of cards into a single dimensional list to be used in serialization etc.
+     * @return ArrayList of all cards on the table.
+     */
     public ArrayList<Card> getFlattenedCardList() {
         ArrayList<Card> flatList = new ArrayList<>();
 
@@ -245,21 +155,9 @@ public class Table {
         return flatList;
     }
 
-    /*
-    Function Name: getTableString
-    Purpose: Generate a stringified representation of the current game table
-    Parameters: None
-    Return Value: Table object as string
-    Local Variables:
-        String tableStr, String variable used to concatenate build and card strings
-    Algorithm:
-        1. Init tableStr
-        2. For each build in currentBuilds:
-            a. Add build string to tableStr
-        3. For each card in loose table cards:
-            a. Add card string to tableStr
-        4. Return tableStr
-    Assistance Received: None
+    /**
+     * Generate a stringified table object for serialization.
+     * @return
      */
     public String getTableString() {
         String tableStr = "";
@@ -267,36 +165,11 @@ public class Table {
         return tableStr;
     }
 
-    /*
-	Function Name: removeCardFromVector
-	Purpose: Remove a single card from a vector
-	Parameters:
-		ArrayList<Card> cardList, vector to remove card from
-		Card cardToRemove, card to remove from card_list
-	Return Value: None
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
-    private void removeCardFromVector(ArrayList<Card> cardList, Card cardToRemove) {
-        cardList.remove(cardToRemove);
-    }
-
-    /*
-	Function Name: doesBuildExist
-	Purpose: Check if build cards already exist on the table
-	Parameters:
-		ArrayList<Card> buildBuddies, Cards in build
-	Return Value: Boolean value representing whether or not the build exists ont able
-	Local Variables: None
-	Algorithm:
-		1. For each set of cards in tableBuilds:
-			a. For each card in the set:
-				i. For each card in buildBuddies:
-					- if set card == buildBuddies card: return true
-		2. Return false
-	Assistance Received: None
-	*/
+    /**
+     * Used to check if a build exists on the table by checking each individual set of cards in tableBuilds.
+     * @param buildBuddies, An ArrayList of Cards in a build.
+     * @return Boolean value representing whether or not the build exists.
+     */
     private boolean doesBuildExist(ArrayList<Card> buildBuddies) {
         for (int i = 0; i < tableBuilds.size(); i++) {
             for (int j = 0; j < tableBuilds.get(i).size(); j++) {
@@ -330,13 +203,9 @@ public class Table {
     Assistance Received: None
     */
 //    private void removeFromTableBuilds(ArrayList<Card> cardsToRemove) {
-//
 //    }
 
-    private ArrayList<ArrayList<Card>> totalTableCards;
-    private ArrayList<Card> tableCards;
-    private ArrayList<ArrayList<Card>> tableBuilds;
-//    private ArrayList<Build> currentBuilds;
+
 
 
 }

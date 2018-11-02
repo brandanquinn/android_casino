@@ -3,44 +3,27 @@ package com.brandanquinn.casino.model;
 import android.util.Pair;
 
 public class Computer extends Player{
-    /*
-    Function Name: Computer
-    Purpose: Default constructor for Computer class.
-    Parameters: None
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Default constructor for Computer class.
+     */
     public Computer() {
         setScore(0);
         setPlayerString("Computer");
     }
 
-    /*
-    Function Name: Computer
-    Purpose: Overloaded constructor for Computer class; used for deserialization
-    Parameters:
-        int score, value used to set player's score.
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Overloaded constructor for Computer class used in deserialization.
+     * @param score, int value to preset score to.
+     */
     public Computer(int score) {
         setScore(score);
         setPlayerString("Computer");
     }
 
-    /*
-    Function Name: play
-    Purpose: Calls the AI function from the Player parent class
-    Parameters: None
-    Return Value: A pair object containing the Card selected to play by the AI, as well as the best move to make with that card.
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
-    */
+    /**
+     * Computer play function that will call the AI from the Parent class Player.
+     * @return Pair selected by the AI for move to be made.
+     */
     public Pair<Card, Character> play() {
         Pair<Card, Character> movePair = new Pair<Card, Character>(new Card(), 't');
 

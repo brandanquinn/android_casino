@@ -58,15 +58,26 @@ public class StartScreen extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts a new game when proper button is clicked.
+     */
     public void newGameClicked() {
         Intent i = new Intent(getApplicationContext(), GameScreen.class);
         startActivity(i);
     }
 
+    /**
+     * Sets the private member variable for coin toss to whatever user selected.
+     * @param coinTossVal, int value based on what was called for coin toss.
+     */
     public void setCoinTossVal(int coinTossVal) {
         this.coinTossVal = coinTossVal;
     }
 
+    /**
+     * Used for the Tournament class to statically get coinTossValue from previous Activity
+     * @return int value based on what was called for coin toss
+     */
     public static int getCoinToss() {
         return coinTossVal;
     }

@@ -2,20 +2,11 @@ package com.brandanquinn.casino.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.brandanquinn.casino.casino.AppContextProvider;
 import com.brandanquinn.casino.casino.R;
 import com.brandanquinn.casino.model.Card;
 import com.brandanquinn.casino.model.Player;
@@ -23,33 +14,50 @@ import com.brandanquinn.casino.model.Table;
 
 import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Display {
+    private ArrayList<ImageButton> computerButtons;
+    private ArrayList<ImageButton> humanButtons;
+    private ArrayList<ImageButton> tableButtons;
+    private Activity gameActivity;
+    private Context appContext;
+
     public Display(Context context) {
-        this.currentButtons = new ArrayList<>();
+        this.humanButtons = new ArrayList<>();
+        this.computerButtons = new ArrayList<>();
+        this.tableButtons = new ArrayList<>();
         this.appContext = context;
         this.gameActivity = (Activity)this.appContext;
 
     }
 
-    public ArrayList<ImageButton> getCurrentButtons() {
-        return this.currentButtons;
+    /**
+     * Getter for humanButtons private member variable
+     * @return ArrayList of buttons in human's hand
+     */
+    public ArrayList<ImageButton> getHumanButtons() {
+        return this.humanButtons;
     }
 
-    /*
-        Function Name: updateView
-        Purpose: Dynamically update the view based on the model.
-        Parameters:
-            ArrayList<Player> gamePlayers, Players of the game
-            Table gameTable, table object containing all cards/builds on the table
-            int roundNum, integer value to display round number
-        Return Value:
-        Local Variables:
-        Algorithm:
-        Assistance Received:
-         */
+    /**
+     * Getter for computerButtons private member variable
+     * @return ArrayList of buttons in the computer's hand
+     */
+    public ArrayList<ImageButton> getComputerButtons() { return this.computerButtons; }
+
+    /**
+     * Getter for tableButtons private member variable
+     * @return ArrayList of buttons on the table
+     */
+    public ArrayList<ImageButton> getTableButtons() { return this.tableButtons; }
+
+    /**
+     * Updates the various view components using information from the model.
+     * @param gamePlayers, ArrayList of game players
+     * @param gameTable, Table object used to access cards/builds on the table
+     * @param roundNum, int used to keep track of current round number
+     */
     public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
 
         displayCards(gamePlayers, gameTable);
@@ -57,16 +65,10 @@ public class Display {
         displayScores(gamePlayers);
     }
 
-    /*
-    Function Name: displayCards
-    Purpose: Create ImageButtons for each card and display them on the screen.
-    Parameters:
-        ArrayList<Player> gamePlayers, List of game players
-        Table gameTable, Game table object
-    Return Value: None
-    Local Variables:
-    Algorithm:
-    Assistance Received: None
+    /**
+     * Adds dynamically created cards to their respective grids in the view.
+     * @param gamePlayers, ArrayList of game players
+     * @param gameTable, Table object used to access cards/builds on the table
      */
     private void displayCards(ArrayList<Player> gamePlayers, Table gameTable) {
         // For each card in human hand - create an image button with proper card image
@@ -75,9 +77,7 @@ public class Display {
         ArrayList<Card> computerHand = gamePlayers.get(1).getHand();
         ArrayList<Card> tableCards = gameTable.getTableCards();
 
-        // Gets the view of the game screen for manipulation
-//        View appView = View.inflate(appContext, R.layout.activity_game_screen, null);
-
+        // Grid components in view
         LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
         LinearLayout computerGrid = this.gameActivity.findViewById(R.id.computerHand);
         LinearLayout tableGrid = this.gameActivity.findViewById(R.id.tableGrid);
@@ -98,24 +98,12 @@ public class Display {
 
     }
 
-    /*
-    Function Name: createButton
-    Purpose: Create proper ImageButtons for displayCards() to add to grid
-    Parameters:
-        Card gameCard, reference card for ImageButton
-    Return Value: A dynamically created and designed ImageButton
-    Local Variables:
-        ImageButton cartBtn, Dynamically created button for card provided.
-        String cardImageResource, String generated by Card class that maps to the proper image file for that card
-        int imageID, Resid created for each cardImageResource to be used for ImageButton setting
-    Algorithm:
-        1. Initialize ImageButton cardBtn
-        2. Get image file name from gameCard member function
-        3. Create custom resid using image file name and assign to imageID var
-        4. Set cardBtn image, scale, and sizing.
-        5. Add cardBtn to currentButtons array
-        6. Return cardBtn
-    Assistance Received: None
+    /**
+     * Dynamically creates ImageButtons for cards using drawable resources.
+     * @param gameCard, Card object used to get image resource and model ImageButton
+     * @param layoutId, Used to identify where the card will be placed on its respective grid and how it must be sized.
+     * @param numCards, Also used to dynamically scale size of cards based on how many are placed in grid.
+     * @return ImageButton dynamically created and based on Card from model.
      */
     private ImageButton createButton(Card gameCard, String layoutId, int numCards) {
         // Programmatically create and return an ImageButton based on card passed.
@@ -141,25 +129,20 @@ public class Display {
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
         }
 
-
-
-        this.currentButtons.add(cardBtn);
+        if (layoutId == "tableCards") {
+            this.tableButtons.add(cardBtn);
+        } else if (layoutId == "humanCards") {
+            this.humanButtons.add(cardBtn);
+        } else {
+            this.computerButtons.add(cardBtn);
+        }
 
         return cardBtn;
     }
 
-    /*
-    Function Name: displayRoundNum
-    Purpose: Update the round number TextView in view
-    Parameters:
-        int roundNum, current round number
-    Return Value: None
-    Local Variables:
-        TextView roundNumDisplay, TextView to update with current round number
-    Algorithm:
-        1. Init roundNumDisplay
-        2. Set text to stringified roundNum
-    Assistance Received: None
+    /**
+     * Update view component for Round Number
+     * @param roundNum, int value to track current round number.
      */
     public void displayRoundNum(int roundNum) {
         TextView roundNumDisplay = this.gameActivity.findViewById(R.id.roundNumber);
@@ -167,14 +150,9 @@ public class Display {
         roundNumDisplay.setText(Integer.toString(roundNum));
     }
 
-    /*
-    Function Name: displayScores
-    Purpose: Update each player's score in view
-    Parameters:
-        ArrayList<Player> gamePlayers, Players of the game
-    Return Value: None
-    Local Variables:
-    Algorithm:
+    /**
+     * Update view component for player scores
+     * @param gamePlayers, ArrayList of game players to access scores.
      */
     public void displayScores(ArrayList<Player> gamePlayers) {
         // Set human score
@@ -185,8 +163,4 @@ public class Display {
         TextView compScoreDisplay = this.gameActivity.findViewById(R.id.computerScore);
         compScoreDisplay.setText(Integer.toString(gamePlayers.get(1).getScore()));
     }
-
-    private ArrayList<ImageButton> currentButtons;
-    private Activity gameActivity;
-    private Context appContext;
 }

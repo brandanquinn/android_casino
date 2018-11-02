@@ -6,14 +6,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Tournament {
-    /*
-    Function Name: Tournament
-    Purpose: Default constructor for the Tournament class
-    Parameters: None
-    Return Value: None
-    Local Variables: None
-    Algorithm: None
-    Assistance Received: None
+    private Round currentRound;
+    private int roundsPlayed;
+    private int cardCount;
+    private int coinToss;
+    private ArrayList<Player> gamePlayers;
+
+    /**
+     * Default constructor for the Tournament class
      */
     public Tournament() {
         this.roundsPlayed = 1;
@@ -24,15 +24,9 @@ public class Tournament {
         this.gamePlayers.add(new Computer());
     }
 
-    /*
-    Function Name: startRound
-    Purpose: Initialize a Round object and start game play
-    Parameters:
-        boolean firstRound, Whether or not this is starting the first round.
-    Return Value: None
-    Local Variables:
-    Algorithm:
-    Assistance Received: None
+    /**
+     * Initializes the current round, conducts coin flip if necessary, and starts game.
+     * @param firstRound, boolean value determining whether or not coin flip needs to occur.
      */
     public void startRound(boolean firstRound) {
         Round gameRound = new Round(roundsPlayed, gamePlayers);
@@ -59,11 +53,4 @@ public class Tournament {
             this.currentRound.startGame(gamePlayers.get(0).getCapturedLast(), false, deckList);
         }
     }
-
-    private Round currentRound;
-    private int roundsPlayed;
-    private int cardCount;
-    private int coinToss;
-    private ArrayList<Player> gamePlayers;
-
 }

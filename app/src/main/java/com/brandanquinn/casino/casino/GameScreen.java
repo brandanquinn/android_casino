@@ -1,13 +1,9 @@
 package com.brandanquinn.casino.casino;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.GridView;
-import android.widget.TextView;
+import android.util.Pair;
 
-import com.brandanquinn.casino.model.Card;
-import com.brandanquinn.casino.model.Deck;
 import com.brandanquinn.casino.model.Player;
 import com.brandanquinn.casino.model.Table;
 import com.brandanquinn.casino.model.Tournament;
@@ -15,12 +11,10 @@ import com.brandanquinn.casino.view.Display;
 
 import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GameScreen extends AppCompatActivity {
     private static Display gameDisplay;
-    private ArrayList<Player> gamePlayers;
     private Tournament tourney;
 
     @Override
@@ -32,19 +26,24 @@ public class GameScreen extends AppCompatActivity {
         tourney.startRound(true);
     }
 
-    /*
-    Function Name: updateActivity
-    Purpose: Called from the model to update the necessary view components through the controller
-    Parameters:
-        ArrayList<Player> gamePlayers, Players of the game
-        Table gameTable, Table object containing all cards/builds on the table
-        int roundNum, Current round number
-    Return Value: None
-    Local Variables:
-    Algorithm:
-    Assistance Received: None
+    /**
+     * Static function used for the model to alert the Controller to update the View.
+     * @param gamePlayers, ArrayList of current game players
+     * @param gameTable, Table object to track cards/builds on the table
+     * @param roundNum, int representing current round number
      */
     public static void updateActivity(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
         gameDisplay.updateView(gamePlayers, gameTable, roundNum);
+    }
+
+    /**
+     * Used to get move selection from user clicking cards on the table.
+     * @return
+     */
+    public static Pair<String, Character> getMoveSelection() {
+        Pair<String, Character> moveSelectionPair = new Pair<String, Character>("CA", 't');
+
+
+        return moveSelectionPair;
     }
 }
