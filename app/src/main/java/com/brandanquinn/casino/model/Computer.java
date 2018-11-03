@@ -25,7 +25,14 @@ public class Computer extends Player{
      * @return Pair selected by the AI for move to be made.
      */
     public Pair<Card, Character> play() {
-        Pair<Card, Character> movePair = new Pair<Card, Character>(new Card(), 't');
+
+        Pair<Card, Character> movePair;
+
+        if (!handIsEmpty()) {
+            movePair = new Pair<>(this.hand.get(0), 't');
+        } else {
+            movePair = new Pair<>(new Card(), 't');
+        }
 
         return movePair;
     }

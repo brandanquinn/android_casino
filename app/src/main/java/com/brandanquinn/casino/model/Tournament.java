@@ -25,6 +25,14 @@ public class Tournament {
     }
 
     /**
+     * Getter for currentRound private member variable
+     * @return Round object that is currently being played in.
+     */
+    public Round getCurrentRound() {
+        return this.currentRound;
+    }
+
+    /**
      * Initializes the current round, conducts coin flip if necessary, and starts game.
      * @param firstRound, boolean value determining whether or not coin flip needs to occur.
      */

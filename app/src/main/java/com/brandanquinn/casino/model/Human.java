@@ -2,6 +2,8 @@ package com.brandanquinn.casino.model;
 
 import android.util.Pair;
 
+import com.brandanquinn.casino.casino.GameScreen;
+
 import java.util.ArrayList;
 
 public class Human extends Player {
@@ -28,14 +30,6 @@ public class Human extends Player {
      * @return Pair that holds Card selected for play as well as move selected.
      */
     public Pair<Card, Character> play() {
-        Pair<Card, Character> movePair = new Pair<>(new Card(), 't');
-        char moveOption = ' ';
-        ArrayList<Card> playerHand = getHand();
-
-
-
-
-
-        return movePair;
+        return new Pair<>(new Card(), 't');
     }
 }

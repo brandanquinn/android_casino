@@ -1,15 +1,20 @@
 package com.brandanquinn.casino.model;
 
+import android.util.Pair;
+
+import com.brandanquinn.casino.casino.GameScreen;
+
 import java.util.ArrayList;
 
 public class Player {
     private int score;
-    private ArrayList<Card> hand;
-    private ArrayList<Card> pile;
     private Table gameTable;
     private boolean isPlaying;
     private String playerString;
     private boolean capturedLast;
+
+    protected ArrayList<Card> hand;
+    protected ArrayList<Card> pile;
 
     /**
      * Default constructor for Player class.
@@ -90,6 +95,14 @@ public class Player {
         }
 
         return handString;
+    }
+
+    /**
+     * Play function that will be overloaded by Human / Computer classes.
+     * @return
+     */
+    public Pair<Card, Character> play() {
+       return new Pair<>(new Card(), ' ');
     }
 
     /**

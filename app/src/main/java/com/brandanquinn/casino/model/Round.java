@@ -1,5 +1,7 @@
 package com.brandanquinn.casino.model;
 
+import android.util.Pair;
+
 import com.brandanquinn.casino.casino.GameScreen;
 
 import java.lang.reflect.Array;
@@ -38,7 +40,8 @@ public class Round {
             dealToTable();
         }
 
-        boolean possibleMoveSelected = false;
+        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+
         Player playerOne, playerTwo;
 
         if (humanIsFirst) {
@@ -58,9 +61,38 @@ public class Round {
     }
 
     /**
+     * Used to print who's turn it is to a TextView in the main activity
+     * @return String denoting who's turn it currently is.
+     */
+    public String whoIsPlaying() {
+        String playing = "Unknown";
+        for (int i = 0; i < this.gamePlayers.size(); i++) {
+            if (gamePlayers.get(i).getIsPlaying()) {
+                playing = gamePlayers.get(i).getPlayerString();
+            }
+        }
+
+        return playing + " is currently playing.";
+    }
+
+    /**
+     * Gets the Player that is currently playing their turn.
+     * @return Player object to make move.
+     */
+    public Player getPlayer() {
+        Player playing = new Player();
+        for (int i = 0; i < this.gamePlayers.size(); i++) {
+            if (gamePlayers.get(i).getIsPlaying()) {
+                playing = gamePlayers.get(i);
+            }
+        }
+        return playing;
+    }
+
+    /**
      * Properly deals hands to the Players
      */
-    public void dealHands() {
+    private void dealHands() {
         for (int i = 0; i < 4; i++) {
             Card newCard = this.gameDeck.drawCard();
             if (newCard.getIsRealCard()) {
@@ -86,5 +118,57 @@ public class Round {
                 this.gameTable.addToTableCards(newCard);
             }
         }
+    }
+
+    /**
+     * Allows each player to select moves until a possible move is made.
+     * @param gamePlayer, Player currently making a move.
+     */
+    public void playTurn(Player gamePlayer) {
+        boolean possibleMoveSelected = false;
+        while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
+            Pair<Card, Character> movePair = gamePlayer.play();
+            if (gamePlayer.getPlayerString() == "Computer") {
+                if (movePair.first.getIsRealCard()) {
+                    possibleMoveSelected = trail(movePair.first, gamePlayer);
+                    changeTurn(gamePlayer);
+                    GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                    return;
+                } else {
+                    return;
+                }
+            } else {
+                if (movePair.second == 't') {
+                    possibleMoveSelected = trail(movePair.first, gamePlayer);
+                    return;
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Used to change from one player's turn to the other.
+     * @param justPlayed, Player that just made a move.
+     */
+    private void changeTurn(Player justPlayed) {
+        if (this.gamePlayers.get(0) == justPlayed) {
+            this.gamePlayers.get(1).setIsPlaying(true);
+        } else {
+            this.gamePlayers.get(0).setIsPlaying(true);
+        }
+    }
+
+    /**
+     * Checks to make sure a trail move can be made, and makes it if possible.
+     * @param cardPlayed, Card object to be played to the table.
+     * @param gamePlayer, Player making the trail move
+     * @return boolean value determining whether or not move was made.
+     */
+    private boolean trail(Card cardPlayed, Player gamePlayer) {
+        gamePlayer.discard(cardPlayed);
+        this.gameTable.addToTableCards(cardPlayed);
+        gamePlayer.setIsPlaying(false);
+        return true;
     }
 }

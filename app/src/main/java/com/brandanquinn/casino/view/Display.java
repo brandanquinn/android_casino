@@ -58,11 +58,11 @@ public class Display {
      * @param gameTable, Table object used to access cards/builds on the table
      * @param roundNum, int used to keep track of current round number
      */
-    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
+    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying) {
 
         displayCards(gamePlayers, gameTable);
         displayRoundNum(roundNum);
-        displayScores(gamePlayers);
+        displayScores(gamePlayers, whoIsPlaying);
     }
 
     /**
@@ -81,6 +81,16 @@ public class Display {
         LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
         LinearLayout computerGrid = this.gameActivity.findViewById(R.id.computerHand);
         LinearLayout tableGrid = this.gameActivity.findViewById(R.id.tableGrid);
+
+        // Empty grid components and button containers
+        humanGrid.removeAllViews();
+        humanButtons.clear();
+
+        computerGrid.removeAllViews();
+        computerButtons.clear();
+
+        tableGrid.removeAllViews();
+        tableButtons.clear();
 
 
         for (int i = 0; i < humanHand.size(); i++) {
@@ -117,12 +127,13 @@ public class Display {
         // Setting ImageButton to proper card image
         cardBtn.setImageResource(imageID);
         cardBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        cardBtn.setTag(gameCard.getCardString());
 
 
         TextView debug = this.gameActivity.findViewById(R.id.debugBox);
 
         // Max width of table is 785 dp
-        if (layoutId == "tableCards" && numCards > 4) {
+        if (layoutId == "tableCards" && numCards > 8) {
             int width = 1268 / numCards;
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
         } else {
@@ -131,7 +142,7 @@ public class Display {
 
         if (layoutId == "tableCards") {
             this.tableButtons.add(cardBtn);
-        } else if (layoutId == "humanCards") {
+        } else if (layoutId == "humanHand") {
             this.humanButtons.add(cardBtn);
         } else {
             this.computerButtons.add(cardBtn);
@@ -151,10 +162,11 @@ public class Display {
     }
 
     /**
-     * Update view component for player scores
+     * Update view component for player scores and prints who is playing
      * @param gamePlayers, ArrayList of game players to access scores.
+     * @param whoIsPlaying, String denoting who is currently playing.
      */
-    public void displayScores(ArrayList<Player> gamePlayers) {
+    public void displayScores(ArrayList<Player> gamePlayers, String whoIsPlaying) {
         // Set human score
         TextView humanScoreDisplay = this.gameActivity.findViewById(R.id.humanScore);
         humanScoreDisplay.setText(Integer.toString(gamePlayers.get(0).getScore()));
@@ -162,5 +174,9 @@ public class Display {
         // Set computer score
         TextView compScoreDisplay = this.gameActivity.findViewById(R.id.computerScore);
         compScoreDisplay.setText(Integer.toString(gamePlayers.get(1).getScore()));
+
+        // Who is playing
+        TextView debug = this.gameActivity.findViewById(R.id.debugBox);
+        debug.setText(whoIsPlaying);
     }
 }
