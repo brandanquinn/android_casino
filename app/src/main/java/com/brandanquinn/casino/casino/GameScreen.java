@@ -51,7 +51,6 @@ public class GameScreen extends AppCompatActivity {
         setupMoveButtons();
         setupCardButtons();
         setupGameplay(currentRound);
-
     }
 
     /**
@@ -63,6 +62,8 @@ public class GameScreen extends AppCompatActivity {
     public static void updateActivity(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
         gameDisplay.updateView(gamePlayers, gameTable, roundNum, tourney.getCurrentRound().whoIsPlaying());
         setupCardButtons();
+        setupPiles(gamePlayers);
+
     }
 
     /**
@@ -158,7 +159,6 @@ public class GameScreen extends AppCompatActivity {
         ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
         ArrayList<ImageButton> tableButtons = gameDisplay.getTableButtons();
 
-
         for (int i = 0; i < myHand.size(); i++) {
             myHand.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -192,5 +192,27 @@ public class GameScreen extends AppCompatActivity {
         cardSelectedFromTable = "";
         TextView moveDisplay = findViewById(R.id.moveDisplay);
         moveDisplay.setText("");
+    }
+
+    /**
+     * Sets up onClickListeners for piles
+     * @param gamePlayers, ArrayList of Player objects of the game.
+     */
+    private static void setupPiles(final ArrayList<Player> gamePlayers) {
+        gameDisplay.getHumanPile().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(context, gamePlayers.get(0).getPileString(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        gameDisplay.getComputerPile().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(context, gamePlayers.get(1).getPileString(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
     }
 }

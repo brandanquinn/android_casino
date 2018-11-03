@@ -2,6 +2,7 @@ package com.brandanquinn.casino.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +21,8 @@ public class Display {
     private ArrayList<ImageButton> computerButtons;
     private ArrayList<ImageButton> humanButtons;
     private ArrayList<ImageButton> tableButtons;
+    private Button humanPile;
+    private Button computerPile;
     private Activity gameActivity;
     private Context appContext;
 
@@ -51,6 +54,18 @@ public class Display {
      * @return ArrayList of buttons on the table
      */
     public ArrayList<ImageButton> getTableButtons() { return this.tableButtons; }
+
+    /**
+     * Getter for humanPile private member variable
+     * @return Button to display human pile
+     */
+    public Button getHumanPile() { return this.humanPile; }
+
+    /**
+     * Getter for computerPile private member variable
+     * @return Button to display computer pile
+     */
+    public Button getComputerPile() { return this.computerPile; }
 
     /**
      * Updates the various view components using information from the model.
@@ -96,10 +111,18 @@ public class Display {
         for (int i = 0; i < humanHand.size(); i++) {
             humanGrid.addView(createButton(humanHand.get(i), "humanHand", humanHand.size()));
         }
+        humanPile = new Button(appContext);
+        humanPile.setText("Human Pile");
+        humanPile.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+        humanGrid.addView(humanPile);
 
         for (int i = 0; i < computerHand.size(); i++) {
             computerGrid.addView(createButton(computerHand.get(i), "computerHand", computerHand.size()));
         }
+        computerPile = new Button(appContext);
+        computerPile.setText("Computer Pile");
+        computerPile.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+        computerGrid.addView(computerPile);
 
         for (int i = 0; i < tableCards.size(); i++) {
             tableGrid.addView(createButton(tableCards.get(i), "tableCards", tableCards.size()));

@@ -109,10 +109,28 @@ public class Player {
         String handString = " ";
 
         for (int i = 0; i < hand.size(); i++) {
-            handString += hand.get(i).getCardString();
+            handString += hand.get(i).getCardString() + " ";
         }
 
         return handString;
+    }
+
+    /**
+     * Gets a stringified version of player's pile for serialization / logging purposes
+     * @return String of cards in player's pile.
+     */
+    public String getPileString() {
+        String pileString = " ";
+
+        if (pile.isEmpty()) {
+            return "Pile is empty.";
+        }
+
+        for (int i = 0; i < pile.size(); i++) {
+            pileString += pile.get(i).getCardString() + " ";
+        }
+
+        return pileString;
     }
 
     /**

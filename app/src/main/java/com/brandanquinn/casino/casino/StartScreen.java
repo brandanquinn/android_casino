@@ -42,6 +42,7 @@ public class StartScreen extends AppCompatActivity {
                 heads.setVisibility(View.GONE);
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
+                newGame.setVisibility(View.VISIBLE);
             }
         });
 
@@ -54,6 +55,7 @@ public class StartScreen extends AppCompatActivity {
                 heads.setVisibility(View.GONE);
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
+                newGame.setVisibility(View.VISIBLE);
             }
         });
     }
