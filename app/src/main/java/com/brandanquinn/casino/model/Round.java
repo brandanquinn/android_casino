@@ -25,6 +25,15 @@ public class Round {
         this.gamePlayers = gamePlayers;
     }
 
+
+    /**
+     * Getter for gamePlayers private member variable.
+     * @return ArrayList of game player objects.
+     */
+    public ArrayList<Player> getGamePlayers() {
+        return this.gamePlayers;
+    }
+
     /**
      * Function where most of the game occurs, rotates through Players turns and allows them to select and make proper moves.
      * @param humanIsFirst, boolean value used to determine which player goes first.
@@ -72,21 +81,7 @@ public class Round {
             }
         }
 
-        return playing + " is currently playing.";
-    }
-
-    /**
-     * Gets the Player that is currently playing their turn.
-     * @return Player object to make move.
-     */
-    public Player getPlayer() {
-        Player playing = new Player();
-        for (int i = 0; i < this.gamePlayers.size(); i++) {
-            if (gamePlayers.get(i).getIsPlaying()) {
-                playing = gamePlayers.get(i);
-            }
-        }
-        return playing;
+        return playing + " is playing.";
     }
 
     /**
@@ -123,28 +118,34 @@ public class Round {
     /**
      * Allows each player to select moves until a possible move is made.
      * @param gamePlayer, Player currently making a move.
+     * @return String to tell user what move was made.
      */
-    public void playTurn(Player gamePlayer) {
+    public String playTurn(Player gamePlayer) {
         boolean possibleMoveSelected = false;
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
-            Pair<Card, Character> movePair = gamePlayer.play();
+            Pair<Card, String> movePair = gamePlayer.play();
             if (gamePlayer.getPlayerString() == "Computer") {
                 if (movePair.first.getIsRealCard()) {
                     possibleMoveSelected = trail(movePair.first, gamePlayer);
                     changeTurn(gamePlayer);
                     GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
-                    return;
+
+                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.getCardString();
                 } else {
-                    return;
+                    return "Move cannot be made.";
                 }
             } else {
-                if (movePair.second == 't') {
+                if (movePair.second == "trail") {
                     possibleMoveSelected = trail(movePair.first, gamePlayer);
-                    return;
+                    changeTurn(gamePlayer);
+                    GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.getCardString();
                 }
             }
 
         }
+
+        return "Move cannot be made.";
     }
 
     /**

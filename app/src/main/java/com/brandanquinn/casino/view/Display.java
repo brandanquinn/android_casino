@@ -132,7 +132,7 @@ public class Display {
 
         TextView debug = this.gameActivity.findViewById(R.id.debugBox);
 
-        // Max width of table is 785 dp
+        // Max width of table is 1268 dp
         if (layoutId == "tableCards" && numCards > 8) {
             int width = 1268 / numCards;
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 180));

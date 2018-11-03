@@ -29,7 +29,14 @@ public class Human extends Player {
      * Play function that interacts with controller to get move selection from user.
      * @return Pair that holds Card selected for play as well as move selected.
      */
-    public Pair<Card, Character> play() {
-        return new Pair<>(new Card(), 't');
+    public Pair<Card, String> play() {
+        Card cardPlayed = new Card();
+        for (int i = 0; i < this.hand.size(); i++) {
+            if (this.hand.get(i).getCardString().equals(cardSelected)) {
+                System.out.println("CARD FOUND AT STRING: " + cardSelected);
+                cardPlayed = this.hand.get(i);
+            }
+        }
+        return new Pair<>(cardPlayed, moveSelected);
     }
 }

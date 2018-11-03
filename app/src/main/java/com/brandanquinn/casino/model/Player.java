@@ -15,6 +15,8 @@ public class Player {
 
     protected ArrayList<Card> hand;
     protected ArrayList<Card> pile;
+    protected String cardSelected;
+    protected String moveSelected;
 
     /**
      * Default constructor for Player class.
@@ -84,6 +86,22 @@ public class Player {
     }
 
     /**
+     * Setter for cardSelected private member variable
+     * @param cardSelected, Card object selected by user via Activity.
+     */
+    public void setCardSelected(String cardSelected) {
+        this.cardSelected = cardSelected;
+    }
+
+    /**
+     * Setter for moveSelected private member variable
+     * @param moveSelected, String detailing move selected by user.
+     */
+    public void setMoveSelected(String moveSelected) {
+        this.moveSelected = moveSelected;
+    }
+
+    /**
      * Stringified version of player's hand for serialization / logging purposes.
      * @return String of Cards in player's hand.
      */
@@ -101,8 +119,8 @@ public class Player {
      * Play function that will be overloaded by Human / Computer classes.
      * @return
      */
-    public Pair<Card, Character> play() {
-       return new Pair<>(new Card(), ' ');
+    public Pair<Card, String> play() {
+       return new Pair<>(new Card(), "");
     }
 
     /**
