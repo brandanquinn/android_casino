@@ -5,26 +5,30 @@ import java.util.ArrayList;
 
 public class Table {
 
-    private ArrayList<ArrayList<Card>> totalTableCards;
     private ArrayList<Card> tableCards;
     private ArrayList<ArrayList<Card>> tableBuilds;
-//    private ArrayList<Build> currentBuilds;
+    private ArrayList<Build> currentBuilds;
 
     /**
      * Default constructor for Table class.
      */
     public Table() {
-        totalTableCards = new ArrayList<>();
         tableBuilds = new ArrayList<>();
         tableCards = new ArrayList<>();
+        currentBuilds = new ArrayList<>();
     }
 
     /**
-     * Overloaded Table constructor used in deserialization
+     * Overloaded constructor for Table class; used in deserialization.
+     * @param tableCards, ArrayList of Cards to be preloaded to table
+     * @param currentBuilds, ArrayList of Builds currently on the table.
      */
-//    public Table(ArrayList<Card> tableCards, ArrayList<Build> currentBuilds) {
-//
-//    }
+    public Table(ArrayList<Card> tableCards, ArrayList<Build> currentBuilds) {
+        for (int i = 0; i < tableCards.size(); i++) {
+            addToTableCards(tableCards.get(i));
+        }
+        this.currentBuilds = currentBuilds;
+    }
 
     /**
      * Getter for tableCards private member variable.
@@ -35,11 +39,20 @@ public class Table {
     }
 
     /**
+     * Getter for currentBuilds private member variable
+     * @return ArrayList of Build objects on the table.
+     */
+    public ArrayList<Build> getCurrentBuilds() { return this.currentBuilds; }
+
+    /**
      * Combines loose tableCards list with tableBuilds list to get full list of cards on the table.
      * @return 2d ArrayList of all cards on the table.
      */
     public ArrayList<ArrayList<Card>> getTotalTableCards() {
-        return this.totalTableCards;
+        ArrayList<ArrayList<Card>> tempVec = new ArrayList<>(this.tableBuilds);
+        tempVec.add(this.tableCards);
+
+        return tempVec;
     }
 
     /**
@@ -94,11 +107,20 @@ public class Table {
 
     /**
      * Used to remove captured builds from the table.
-     * describe param when finished
+     * @param buildsToRemove, ArrayList of Build objects to remove from the table.
      */
-//    public void removeBuilds(ArrayList<Build> buildsToRemove) {
-//
-//    }
+    public void removeBuilds(ArrayList<Build> buildsToRemove) {
+        for (int i = 0; i < buildsToRemove.size(); i++) {
+            ArrayList<ArrayList<Card>> tempBuildCards = new ArrayList<>(buildsToRemove.get(i).getTotalBuildCards());
+            for (int j = 0; j < tempBuildCards.size(); j++) {
+                removeFromTableBuilds(tempBuildCards.get(j));
+            }
+        }
+
+        for (int i = 0; i < buildsToRemove.size(); i++) {
+            this.currentBuilds.remove(buildsToRemove.get(i));
+        }
+    }
 
     /**
      * Gets whether the loose tableCards list is empty or not.
@@ -108,32 +130,13 @@ public class Table {
         return this.tableCards.isEmpty();
     }
 
-    /*
-	Function Name: addBuild
-	Purpose: Add new build to currentBuilds vector
-	Parameters:
-		Build newBuild, pointer to new build object
-	Return Value: None
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
-//    public void addBuild(Build newBuild) {
-//
-//    }
-
-    /*
-	Function Name: getCurrentBuilds
-	Purpose: Getter for currentBuilds private member variable
-	Parameters: None
-	Return Value: Vector of current builds on table
-	Local Variables: None
-	Algorithm: None
-	Assistance Received: None
-	*/
-//    public ArrayList<Build> getCurrentBuilds() {
-//
-//    }
+    /**
+     * Add new build to the currentBuilds vector
+     * @param newBuild, Build object to add to the table.
+     */
+    public void addBuild(Build newBuild) {
+        this.currentBuilds.add(newBuild);
+    }
 
     /**
      * Breaks down 2d lists of cards into a single dimensional list to be used in serialization etc.
@@ -181,29 +184,30 @@ public class Table {
         return false;
     }
 
-    /*
-    Function Name: removeFromTableBuilds
-    Purpose: Remove cards from table builds
-    Parameters:
-        ArrayList<Card> cardsToRemove, Cards to remove from table builds
-    Return Value: None
-    Local Variables:
-        ArrayList<ArrayList<Card>> buildsToErase, 2d vector to keep track of sets of cards to be erased
-        boolean buildErased, keeps track of whether or not the build has been erased
-    Algorithm:
-        1. Initialize local variables
-        2. For each set of cards in tableBuilds:
-            a. For each card in the set:
-                i. For each card to remove:
-                    - If set card == card to remove and !buildErased:
-                        - Add set to buildsToErase
-                        - Set buildErased to true
-        3. For each build to erase:
-            a. Remove build from tableBuilds
-    Assistance Received: None
-    */
-//    private void removeFromTableBuilds(ArrayList<Card> cardsToRemove) {
-//    }
+    /**
+     * Find and remove builds given a list of cards.
+     * @param cardsToRemove, ArrayList of Card objects to find Builds to remove.
+     */
+    private void removeFromTableBuilds(ArrayList<Card> cardsToRemove) {
+        ArrayList<ArrayList<Card>> buildsToErase = new ArrayList<>();
+        boolean buildErased = false;
+
+        for (int i = 0; i < this.tableBuilds.size(); i++) {
+            buildErased = false;
+            for (int j = 0; j < this.tableBuilds.get(i).size(); j++) {
+                for (int k = 0; k < cardsToRemove.size(); k++) {
+                    if (tableBuilds.get(i).get(j).getCardString() == cardsToRemove.get(k).getCardString() && !buildErased) {
+                        buildsToErase.add(this.tableBuilds.get(i));
+                        buildErased = true;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < buildsToErase.size(); i++) {
+            this.tableBuilds.remove(buildsToErase.get(i));
+        }
+    }
 
 
 

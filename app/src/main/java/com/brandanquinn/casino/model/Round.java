@@ -123,23 +123,32 @@ public class Round {
     public String playTurn(Player gamePlayer) {
         boolean possibleMoveSelected = false;
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
-            Pair<Card, String> movePair = gamePlayer.play();
+            Pair<ArrayList<Card>, String> movePair = gamePlayer.play();
             if (gamePlayer.getPlayerString() == "Computer") {
-                if (movePair.first.getIsRealCard()) {
-                    possibleMoveSelected = trail(movePair.first, gamePlayer);
+                if (movePair.first.get(0).getIsRealCard()) {
+                    possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
                     changeTurn(gamePlayer);
                     GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
 
-                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.getCardString();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                 } else {
                     return "Move cannot be made.";
                 }
             } else {
                 if (movePair.second == "trail") {
-                    possibleMoveSelected = trail(movePair.first, gamePlayer);
+                    possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
                     changeTurn(gamePlayer);
                     GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
-                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.getCardString();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                } else if (movePair.second == "build") {
+                    possibleMoveSelected = build(movePair.first.get(0), movePair.first.get(1), new ArrayList<>(movePair.first.subList(2, movePair.first.size())), gamePlayer);
+                    if (possibleMoveSelected) {
+                        changeTurn(gamePlayer);
+                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    } else {
+                        return "Build move cannot be made with cards selected.";
+                    }
                 }
             }
 
@@ -171,5 +180,67 @@ public class Round {
         this.gameTable.addToTableCards(cardPlayed);
         gamePlayer.setIsPlaying(false);
         return true;
+    }
+
+    private boolean build(Card lockedCard, Card playedCard, ArrayList<Card> selectedFromTable, Player gamePlayer) {
+        ArrayList<Card> tableCards = new ArrayList<>(this.gameTable.getTableCards());
+        ArrayList<Card> filteredCards = new ArrayList<>(tableCards);
+        boolean extendingBuild = false;
+
+        if (lockedCard.getLockedToBuild()) { extendingBuild = true; }
+
+        int selectedVal = lockedCard.getValue();
+        int playedVal = playedCard.getValue();
+
+        if (playedVal >= selectedVal) { return false; }
+
+        ArrayList<Card> buildCards = new ArrayList<>();
+        buildCards.add(playedCard);
+
+        int setSum = playedVal;
+        for (int i = 0; i < selectedFromTable.size(); i++) {
+            setSum += selectedFromTable.get(i).getValue();
+            buildCards.add(selectedFromTable.get(i));
+            if (setSum > selectedVal) {
+                return false;
+            }
+            if (setSum == selectedVal) {
+                break;
+            }
+        }
+
+        if (setSum != selectedVal) { return false; }
+
+        if (!extendingBuild) {
+            // creating new single build
+            ArrayList<ArrayList<Card>> totalBuildCards = new ArrayList<>();
+            totalBuildCards.add(buildCards);
+            Build b1 = new Build(totalBuildCards, selectedVal, lockedCard, gamePlayer.getPlayerString());
+            this.gameTable.addBuild(b1);
+            for (int i = 0; i < buildCards.size(); i++) {
+                buildCards.get(i).setPartOfBuild(true);
+            }
+            playedCard.setBuildBuddies(buildCards);
+            gamePlayer.discard(playedCard);
+            this.gameTable.addToTableCards(playedCard);
+            lockedCard.setLockedToBuild(true);
+
+            return true;
+        } else {
+            // extending current build to a multi build
+            // work in prog
+        }
+
+        // Create build with build cards.
+        return false;
+
+    }
+
+    private void filterBuildOptions(ArrayList<Card> availableCards, int playedVal, int buildSum) {
+        for (int i = 0; i < availableCards.size(); i++) {
+            if (availableCards.get(i).getValue() + playedVal > buildSum) {
+                availableCards.remove(availableCards.get(i));
+            }
+        }
     }
 }

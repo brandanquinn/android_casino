@@ -2,6 +2,8 @@ package com.brandanquinn.casino.model;
 
 import android.util.Pair;
 
+import java.util.ArrayList;
+
 public class Computer extends Player{
     /**
      * Default constructor for Computer class.
@@ -24,16 +26,13 @@ public class Computer extends Player{
      * Computer play function that will call the AI from the Parent class Player.
      * @return Pair selected by the AI for move to be made.
      */
-    public Pair<Card, String> play() {
-
-        Pair<Card, String> movePair;
+    public Pair<ArrayList<Card>, String> play() {
+        ArrayList<Card> cards = new ArrayList<>();
 
         if (!handIsEmpty()) {
-            movePair = new Pair<>(this.hand.get(0), "trail");
-        } else {
-            movePair = new Pair<>(new Card(), "trail");
+            cards.add(this.hand.get(0));
         }
 
-        return movePair;
+        return new Pair<>(cards, "trail");
     }
 }

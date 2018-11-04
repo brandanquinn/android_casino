@@ -4,19 +4,22 @@ import android.util.Pair;
 
 import com.brandanquinn.casino.casino.GameScreen;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Player {
     private int score;
-    private Table gameTable;
     private boolean isPlaying;
     private String playerString;
     private boolean capturedLast;
 
     protected ArrayList<Card> hand;
     protected ArrayList<Card> pile;
-    protected String cardSelected;
+    protected String cardSelectedFromHand;
+    protected String cardPlayedIntoBuild;
+    protected ArrayList<String> cardsSelectedFromTable;
     protected String moveSelected;
+    protected Table gameTable;
 
     /**
      * Default constructor for Player class.
@@ -86,11 +89,27 @@ public class Player {
     }
 
     /**
-     * Setter for cardSelected private member variable
+     * Setter for cardSelectedFromHand private member variable
      * @param cardSelected, Card object selected by user via Activity.
      */
-    public void setCardSelected(String cardSelected) {
-        this.cardSelected = cardSelected;
+    public void setCardSelectedFromHand(String cardSelected) {
+        this.cardSelectedFromHand = cardSelected;
+    }
+
+    /**
+     * Setter for cardPlayedIntoBuild private member variable
+     * @param cardSelected, Card object selected by user via Activity.
+     */
+    public void setCardPlayedIntoBuild(String cardSelected) {
+        this.cardPlayedIntoBuild = cardSelected;
+    }
+
+    /**
+     * Setter for cardSelectedFromTable private member variable
+     * @param cardsSelected, List of Card objects selected by user via Activity.
+     */
+    public void setCardsSelectedFromTable(ArrayList<String> cardsSelected) {
+        this.cardsSelectedFromTable = cardsSelected;
     }
 
     /**
@@ -137,8 +156,8 @@ public class Player {
      * Play function that will be overloaded by Human / Computer classes.
      * @return
      */
-    public Pair<Card, String> play() {
-       return new Pair<>(new Card(), "");
+    public Pair<ArrayList<Card>, String> play() {
+       return new Pair<>(new ArrayList<Card>(), "");
     }
 
     /**
