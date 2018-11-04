@@ -127,7 +127,7 @@ public class Round {
             if (gamePlayer.getPlayerString() == "Computer") {
                 if (movePair.first.get(0).getIsRealCard()) {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
-                    changeTurn(gamePlayer);
+                    changeTurn();
                     GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
 
                     return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
@@ -137,13 +137,13 @@ public class Round {
             } else {
                 if (movePair.second == "trail") {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
-                    changeTurn(gamePlayer);
+                    changeTurn();
                     GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                     return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                 } else if (movePair.second == "build") {
                     possibleMoveSelected = build(movePair.first.get(0), movePair.first.get(1), new ArrayList<>(movePair.first.subList(2, movePair.first.size())), gamePlayer);
                     if (possibleMoveSelected) {
-                        changeTurn(gamePlayer);
+                        changeTurn();
                         GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                         return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                     } else {
@@ -159,13 +159,14 @@ public class Round {
 
     /**
      * Used to change from one player's turn to the other.
-     * @param justPlayed, Player that just made a move.
      */
-    private void changeTurn(Player justPlayed) {
-        if (this.gamePlayers.get(0) == justPlayed) {
-            this.gamePlayers.get(1).setIsPlaying(true);
+    private void changeTurn() {
+        if (gamePlayers.get(0).getIsPlaying()) {
+            gamePlayers.get(0).setIsPlaying(false);
+            gamePlayers.get(1).setIsPlaying(true);
         } else {
-            this.gamePlayers.get(0).setIsPlaying(true);
+            gamePlayers.get(1).setIsPlaying(false);
+            gamePlayers.get(0).setIsPlaying(true);
         }
     }
 
@@ -178,7 +179,6 @@ public class Round {
     private boolean trail(Card cardPlayed, Player gamePlayer) {
         gamePlayer.discard(cardPlayed);
         this.gameTable.addToTableCards(cardPlayed);
-        gamePlayer.setIsPlaying(false);
         return true;
     }
 

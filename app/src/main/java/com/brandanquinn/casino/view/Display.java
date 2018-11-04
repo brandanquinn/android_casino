@@ -156,7 +156,7 @@ public class Display {
         buildButton.setTag(buildString);
 
         int lightBlue = Color.parseColor("#7bb3ff");
-        buildButton.setBackgroundColor(lightBlue);
+        buildButton.setBackgroundColor(Color.WHITE);
         buildButton.setBackgroundColor(2);
 
         if (buildCards.size() > 1) {
