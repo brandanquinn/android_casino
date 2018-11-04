@@ -2,6 +2,7 @@ package com.brandanquinn.casino.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -9,18 +10,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.brandanquinn.casino.casino.R;
+import com.brandanquinn.casino.model.Build;
 import com.brandanquinn.casino.model.Card;
 import com.brandanquinn.casino.model.Player;
 import com.brandanquinn.casino.model.Table;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Display {
     private ArrayList<ImageButton> computerButtons;
     private ArrayList<ImageButton> humanButtons;
     private ArrayList<ImageButton> tableButtons;
+    private ArrayList<Button> buildButtons;
     private Button humanPile;
     private Button computerPile;
     private Activity gameActivity;
@@ -30,6 +34,7 @@ public class Display {
         this.humanButtons = new ArrayList<>();
         this.computerButtons = new ArrayList<>();
         this.tableButtons = new ArrayList<>();
+        this.buildButtons = new ArrayList<>();
         this.appContext = context;
         this.gameActivity = (Activity)this.appContext;
 
@@ -54,6 +59,8 @@ public class Display {
      * @return ArrayList of buttons on the table
      */
     public ArrayList<ImageButton> getTableButtons() { return this.tableButtons; }
+
+    public ArrayList<Button> getBuildButtons() { return this.buildButtons; }
 
     /**
      * Getter for humanPile private member variable
@@ -91,6 +98,8 @@ public class Display {
         ArrayList<Card> humanHand = gamePlayers.get(0).getHand();
         ArrayList<Card> computerHand = gamePlayers.get(1).getHand();
         ArrayList<Card> tableCards = gameTable.getTableCards();
+        ArrayList<Build> currentBuilds = gameTable.getCurrentBuilds();
+        int cardNum = gameTable.getFlattenedCardList().size();
 
         // Grid components in view
         LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
@@ -106,7 +115,12 @@ public class Display {
 
         tableGrid.removeAllViews();
         tableButtons.clear();
+        buildButtons.clear();
 
+        for (int i = 0; i < currentBuilds.size(); i++) {
+            ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
+            tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
+        }
 
         for (int i = 0; i < humanHand.size(); i++) {
             humanGrid.addView(createButton(humanHand.get(i), "humanHand", humanHand.size()));
@@ -125,9 +139,40 @@ public class Display {
         computerGrid.addView(computerPile);
 
         for (int i = 0; i < tableCards.size(); i++) {
-            tableGrid.addView(createButton(tableCards.get(i), "tableCards", tableCards.size()));
+            tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
         }
 
+
+    }
+
+    /**
+     * Dynamically create buttons for each build.
+     * @param buildCards
+     * @param numCards
+     * @return
+     */
+    private Button createBuildButton(ArrayList<ArrayList<Card>> buildCards, int numCards, String buildString) {
+        Button buildButton = new Button(appContext);
+        buildButton.setTag(buildString);
+
+        int lightBlue = Color.parseColor("#7bb3ff");
+        buildButton.setBackgroundColor(lightBlue);
+        buildButton.setBackgroundColor(2);
+
+        if (buildCards.size() > 1) {
+            buildButton.setText("Multi-Build of: " + buildString);
+        } else {
+            buildButton.setText("Build of: " + buildString);
+        }
+
+        if (numCards > 8) {
+            int width = 1268 / numCards;
+            buildButton.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
+        } else {
+            buildButton.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+        }
+
+        return buildButton;
 
     }
 

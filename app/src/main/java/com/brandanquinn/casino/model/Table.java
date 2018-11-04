@@ -32,10 +32,18 @@ public class Table {
 
     /**
      * Getter for tableCards private member variable.
-     * @return
+     * @return ArrayList of loose table cards
      */
     public ArrayList<Card> getTableCards() {
         return this.tableCards;
+    }
+
+    /**
+     * Getter for tableBuilds private member variable
+     * @return 2d ArrayList of all cards in table builds.
+     */
+    public ArrayList<ArrayList<Card>> getTableBuilds() {
+        return this.tableBuilds;
     }
 
     /**
