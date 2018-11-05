@@ -2,6 +2,7 @@ package com.brandanquinn.casino.casino;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.media.Image;
 import android.media.ImageReader;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class GameScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_screen);
@@ -172,6 +174,13 @@ public class GameScreen extends AppCompatActivity {
                             gamePlayers.get(0).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
+                        } else if (moveType == "capture" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                            // Setup move pair for Human
+                            gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
+                            gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
+                            gamePlayers.get(0).setMoveSelected(moveType);
+                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            toast.show();
                         }
                     }
                 } else {
@@ -191,6 +200,13 @@ public class GameScreen extends AppCompatActivity {
                             // Setup move pair for Human
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setCardPlayedIntoBuild(cardPlayedIntoBuild);
+                            gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
+                            gamePlayers.get(1).setMoveSelected(moveType);
+                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if (moveType == "capture" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                            // Setup move pair for Human
+                            gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(1).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
@@ -218,6 +234,7 @@ public class GameScreen extends AppCompatActivity {
         moveBeingMade = true;
         ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
         ArrayList<ImageButton> tableButtons = gameDisplay.getTableButtons();
+        ArrayList<Button> buildButtons = gameDisplay.getBuildButtons();
 
         final TextView cardsSelected = ((Activity) context).findViewById(R.id.cardsSelected);
 
@@ -249,6 +266,21 @@ public class GameScreen extends AppCompatActivity {
                         toast.show();
 
                         cardsSelected.setText(stringifyTableSelection());
+                    }
+                });
+            }
+
+            for (int i = 0; i < buildButtons.size(); i++) {
+                buildButtons.get(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addToCardSelectedFromTable((String)v.getTag());
+
+                        Toast toast = Toast.makeText(context, v.getTag() + " selected.", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        cardsSelected.setText(stringifyTableSelection());
+
                     }
                 });
             }

@@ -366,8 +366,8 @@
 
     <TextView
         android:id="@+id/cardsSelected"
-        android:layout_width="228dp"
-        android:layout_height="29dp"
+        android:layout_width="229dp"
+        android:layout_height="78dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -382,6 +382,6 @@
         app:layout_constraintHorizontal_bias="0.787"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.642" />
+        app:layout_constraintVertical_bias="0.673" />
 
 </android.support.constraint.ConstraintLayout>

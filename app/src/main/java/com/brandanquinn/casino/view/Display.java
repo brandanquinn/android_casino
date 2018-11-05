@@ -159,7 +159,6 @@ public class Display {
         int lightBlue = Color.parseColor("#7bb3ff");
         buildButton.setBackgroundColor(lightBlue);
         buildButton.setVisibility(View.VISIBLE);
-        buildButton.setBackgroundColor(2);
 
         if (buildCards.size() > 1) {
             buildButton.setText("Multi-Build of:\n " + buildString);
@@ -176,6 +175,8 @@ public class Display {
             buildButton.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
         }
         buildButton.setHeight(180);
+
+        buildButtons.add(buildButton);
 
         return buildButton;
 

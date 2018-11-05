@@ -156,6 +156,15 @@ public class Round {
                     } else {
                         return "Build move cannot be made with cards selected.";
                     }
+                } else if (movePair.second == "capture") {
+                    possibleMoveSelected = capture(movePair.first.get(0), new ArrayList<Card>(movePair.first.subList(1, movePair.first.size())), gamePlayer);
+                    if (possibleMoveSelected) {
+                        changeTurn();
+                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    } else {
+                        return "Capture move cannot be made with cards selected.";
+                    }
                 }
             }
 
@@ -257,6 +266,126 @@ public class Round {
 
             return true;
         }
+    }
+
+    private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, Player gamePlayer) {
+       ArrayList<Build> capturableBuilds = new ArrayList<>();
+       ArrayList<Build> currentBuilds = this.gameTable.getCurrentBuilds();
+
+       for (int i = 0; i < currentBuilds.size(); i++) {
+           if (currentBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
+                   || (currentBuilds.get(i).getBuildOwner() != gamePlayer.getPlayerString() && currentBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
+               capturableBuilds.add(currentBuilds.get(i));
+           }
+       }
+
+       int playedVal = cardPlayed.getValue();
+       ArrayList<Card> capturableCards = new ArrayList<>();
+
+       // Iterate through selected cards and pull off same val capturable cards.
+       for (int i = 0; i < selectedCards.size(); i++) {
+           if (selectedCards.get(i).getValue() == playedVal) {
+               capturableCards.add(selectedCards.get(i));
+               selectedCards.remove(selectedCards.get(i));
+           }
+       }
+
+       ArrayList<ArrayList<Card>> capturableSets = getCapturableSets(selectedCards, playedVal);
+
+       // If you have selected cards that cannot be captured. Invalid move selected.
+       if (!selectedCards.isEmpty()) {
+           return false;
+       }
+
+       gamePlayer.discard(cardPlayed);
+       this.gameTable.removeCards(capturableCards);
+       this.gameTable.removeSets(capturableSets);
+       this.gameTable.removeBuilds(capturableBuilds);
+
+       ArrayList<Card> pileAdditions = new ArrayList<>();
+       pileAdditions.add(cardPlayed);
+
+       for (int i = 0; i < capturableCards.size(); i++) {
+           pileAdditions.add(capturableCards.get(i));
+       }
+
+       for (int i = 0; i < capturableSets.size(); i++) {
+           for (int j = 0; j < capturableSets.get(i).size(); j++) {
+               pileAdditions.add(capturableSets.get(i).get(j));
+           }
+       }
+
+       for (int i = 0; i < capturableBuilds.size(); i++) {
+           capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
+           ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
+           for (int j = 0; j < tempBuildCards.size(); j++) {
+               for (int k = 0; k < tempBuildCards.get(j).size(); k++) {
+                   pileAdditions.add(tempBuildCards.get(j).get(k));
+               }
+           }
+       }
+       gamePlayer.addToPile(pileAdditions);
+       return true;
+
+    }
+
+    /**
+     * Find capturable sets of cards given cards selected by user.
+     * @param selectedCards, ArrayList of Cards selected by user to capture.
+     * @param playedVal, int value that Cards must sum to.
+     * @return 2d ArrayList of capturable sets of Cards
+     */
+    private ArrayList<ArrayList<Card>> getCapturableSets(ArrayList<Card> selectedCards, int playedVal) {
+        ArrayList<ArrayList<Card>> totalSets = new ArrayList<>();
+        ArrayList<Card> empty = new ArrayList<>();
+        totalSets.add(new ArrayList<>(empty));
+
+        // Algo to get all possible sets.
+        for (int i = 0; i < selectedCards.size(); i++) {
+            ArrayList<ArrayList<Card>> tempSet;
+            if (i == 0) {
+                tempSet = new ArrayList<>();
+                tempSet.add(new ArrayList<>(empty));
+            } else {
+                tempSet = new ArrayList<>(totalSets);
+            }
+
+            for (int j = 0; j < tempSet.size(); j++) {
+                tempSet.get(j).add(selectedCards.get(i));
+            }
+            for (int j = 0; j < tempSet.size(); j++) {
+                totalSets.add(tempSet.get(j));
+            }
+
+            tempSet.clear();
+        }
+        ArrayList<ArrayList<Card>> capturableSets = new ArrayList<>();
+        // Iterate through list of all sets add capturable ones to list.
+        for (int i = 0; i < totalSets.size(); i++) {
+            if (getSetValue(totalSets.get(i)) == playedVal && totalSets.get(i).size() > 1 && !capturableSets.contains(totalSets.get(i))) {
+                capturableSets.add(totalSets.get(i));
+                for (int j = 0; j < totalSets.get(i).size(); j++) {
+                    // Remove capturable sets from selected cards list
+                    selectedCards.remove(totalSets.get(i).get(j));
+                }
+            }
+        }
+
+        return capturableSets;
+    }
+
+    /**
+     * Gets the total sum value of the set
+     * @param set, ArrayList of Cards in set
+     * @return int total sum value of set.
+     */
+    private int getSetValue(ArrayList<Card> set) {
+        int sum = 0;
+        for (int i = 0; i < set.size(); i++) {
+            sum += set.get(i).getValue();
+        }
+
+        return sum;
     }
 
     /**
