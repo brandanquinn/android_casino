@@ -3,6 +3,7 @@ package com.brandanquinn.casino.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -156,21 +157,25 @@ public class Display {
         buildButton.setTag(buildString);
 
         int lightBlue = Color.parseColor("#7bb3ff");
-        buildButton.setBackgroundColor(Color.WHITE);
+        buildButton.setBackgroundColor(lightBlue);
+        buildButton.setVisibility(View.VISIBLE);
         buildButton.setBackgroundColor(2);
 
         if (buildCards.size() > 1) {
-            buildButton.setText("Multi-Build of: " + buildString);
+            buildButton.setText("Multi-Build of:\n " + buildString);
         } else {
-            buildButton.setText("Build of: " + buildString);
+            buildButton.setText("Build of: \n" + buildString);
         }
 
         if (numCards > 8) {
             int width = 1268 / numCards;
+            buildButton.setWidth(width);
             buildButton.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
         } else {
+            buildButton.setWidth(150);
             buildButton.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
         }
+        buildButton.setHeight(180);
 
         return buildButton;
 
@@ -189,6 +194,12 @@ public class Display {
 
         // Initializing ImageButton and basic resources
         ImageButton cardBtn = new ImageButton(appContext);
+
+        if (gameCard.getLockedToBuild()) {
+            int lightBlue = Color.parseColor("#7bb3ff");
+            cardBtn.setBackgroundColor(lightBlue);
+        }
+
         String cardImageResource = gameCard.getImageResourceName();
         int imageID = appContext.getResources().getIdentifier(cardImageResource, "drawable", appContext.getPackageName());
 

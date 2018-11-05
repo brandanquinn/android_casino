@@ -127,19 +127,26 @@ public class Round {
             if (gamePlayer.getPlayerString() == "Computer") {
                 if (movePair.first.get(0).getIsRealCard()) {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
-                    changeTurn();
-                    GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
-
-                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    if (possibleMoveSelected) {
+                        changeTurn();
+                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    } else {
+                        return "Trail move cannot be made.";
+                    }
                 } else {
                     return "Move cannot be made.";
                 }
             } else {
                 if (movePair.second == "trail") {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
-                    changeTurn();
-                    GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
-                    return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    if (possibleMoveSelected) {
+                        changeTurn();
+                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                    } else {
+                        return "Trail move cannot be made.";
+                    }
                 } else if (movePair.second == "build") {
                     possibleMoveSelected = build(movePair.first.get(0), movePair.first.get(1), new ArrayList<>(movePair.first.subList(2, movePair.first.size())), gamePlayer);
                     if (possibleMoveSelected) {
@@ -177,11 +184,22 @@ public class Round {
      * @return boolean value determining whether or not move was made.
      */
     private boolean trail(Card cardPlayed, Player gamePlayer) {
+        if (cardPlayed.getLockedToBuild()) {
+            return false;
+        }
         gamePlayer.discard(cardPlayed);
         this.gameTable.addToTableCards(cardPlayed);
         return true;
     }
 
+    /**
+     * Assesses a build move and makes the move if it is possible.
+     * @param lockedCard, Card in hand that was used to sum the build to
+     * @param playedCard, Card played from hand into build.
+     * @param selectedFromTable, Cards selected from the table by user.
+     * @param gamePlayer, Player currently making move.
+     * @return
+     */
     private boolean build(Card lockedCard, Card playedCard, ArrayList<Card> selectedFromTable, Player gamePlayer) {
         ArrayList<Card> tableCards = new ArrayList<>(this.gameTable.getTableCards());
         ArrayList<Card> filteredCards = new ArrayList<>(tableCards);
@@ -228,19 +246,47 @@ public class Round {
             return true;
         } else {
             // extending current build to a multi build
-            // work in prog
+            Build b1 = getCorrectBuild(lockedCard);
+            b1.extendBuild(buildCards);
+            for (int i = 0; i < buildCards.size(); i++) {
+                buildCards.get(i).setPartOfBuild(true);
+            }
+            playedCard.setBuildBuddies(buildCards);
+            gamePlayer.discard(playedCard);
+            this.gameTable.addToTableCards(playedCard);
+
+            return true;
         }
-
-        // Create build with build cards.
-        return false;
-
     }
 
+    /**
+     * Filters out Cards from a list that can't be used in a build.
+     * @param availableCards, ArrayList of Cards available to build with
+     * @param playedVal, int value of current cards played into build
+     * @param buildSum, int sum value of the build
+     */
     private void filterBuildOptions(ArrayList<Card> availableCards, int playedVal, int buildSum) {
         for (int i = 0; i < availableCards.size(); i++) {
             if (availableCards.get(i).getValue() + playedVal > buildSum) {
                 availableCards.remove(availableCards.get(i));
             }
         }
+    }
+
+    /**
+     * Finds a current Build given a locked card from hand.
+     * @param myCard, Card from hand that is currently locked to a build.
+     * @return
+     */
+    private Build getCorrectBuild(Card myCard) {
+        ArrayList<Build> totalBuilds = this.gameTable.getCurrentBuilds();
+
+        for (int i = 0; i < totalBuilds.size(); i++) {
+            if (totalBuilds.get(i).getSumCard().getCardString().equals(myCard.getCardString())) {
+                return totalBuilds.get(i);
+            }
+        }
+
+        return null;
     }
 }
