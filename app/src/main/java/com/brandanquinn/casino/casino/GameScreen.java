@@ -64,8 +64,8 @@ public class GameScreen extends AppCompatActivity {
      * @param gameTable, Table object to track cards/builds on the table
      * @param roundNum, int representing current round number
      */
-    public static void updateActivity(ArrayList<Player> gamePlayers, Table gameTable, int roundNum) {
-        gameDisplay.updateView(gamePlayers, gameTable, roundNum, tourney.getCurrentRound().whoIsPlaying());
+    public static void updateActivity(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, boolean updateTable) {
+        gameDisplay.updateView(gamePlayers, gameTable, roundNum, tourney.getCurrentRound().whoIsPlaying(), updateTable);
         setupCardButtons();
         setupPiles(gamePlayers);
 
@@ -302,10 +302,6 @@ public class GameScreen extends AppCompatActivity {
         cardsSelection.setText("");
 
         ArrayList<Player> gamePlayers = currentRound.getGamePlayers();
-        if (gamePlayers.get(0).handIsEmpty() && gamePlayers.get(1).handIsEmpty()) {
-            clearButtonListeners();
-            currentRound.dealHands();
-        }
     }
 
     /**

@@ -204,7 +204,7 @@ public class Table {
             buildErased = false;
             for (int j = 0; j < this.tableBuilds.get(i).size(); j++) {
                 for (int k = 0; k < cardsToRemove.size(); k++) {
-                    if (tableBuilds.get(i).get(j).getCardString() == cardsToRemove.get(k).getCardString() && !buildErased) {
+                    if (tableBuilds.get(i).get(j).getCardString().equals(cardsToRemove.get(k).getCardString()) && !buildErased) {
                         buildsToErase.add(this.tableBuilds.get(i));
                         buildErased = true;
                     }

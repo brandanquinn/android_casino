@@ -1,6 +1,7 @@
 package com.brandanquinn.casino.view;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -20,6 +21,8 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 public class Display {
     private ArrayList<ImageView> computerButtons;
@@ -79,9 +82,9 @@ public class Display {
      * @param gameTable, Table object used to access cards/builds on the table
      * @param roundNum, int used to keep track of current round number
      */
-    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying) {
+    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying, boolean updateTable) {
 
-        displayCards(gamePlayers, gameTable);
+        displayCards(gamePlayers, gameTable, updateTable);
         displayRoundNum(roundNum);
         displayScores(gamePlayers, whoIsPlaying);
     }
@@ -91,19 +94,30 @@ public class Display {
      * @param gamePlayers, ArrayList of game players
      * @param gameTable, Table object used to access cards/builds on the table
      */
-    private void displayCards(ArrayList<Player> gamePlayers, Table gameTable) {
+    private void displayCards(ArrayList<Player> gamePlayers, Table gameTable, boolean updateTable) {
         // For each card in human hand - create an image button with proper card image
         // Assign button to a column in the respective players grid
         ArrayList<Card> humanHand = gamePlayers.get(0).getHand();
         ArrayList<Card> computerHand = gamePlayers.get(1).getHand();
         ArrayList<Card> tableCards = gameTable.getTableCards();
         ArrayList<Build> currentBuilds = gameTable.getCurrentBuilds();
-        int cardNum = gameTable.getFlattenedCardList().size();
+        int cardNum = gameTable.getCurrentBuilds().size() + gameTable.getTableCards().size();
 
         // Grid components in view
         LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
         LinearLayout computerGrid = this.gameActivity.findViewById(R.id.computerHand);
         LinearLayout tableGrid = this.gameActivity.findViewById(R.id.tableGrid);
+
+        ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+        ActivityManager activityManager = (ActivityManager)gameActivity.getSystemService(ACTIVITY_SERVICE);
+        activityManager.getMemoryInfo(mi);
+        double availableMegs = mi.availMem / 0x100000L;
+
+//Percentage can be calculated for API 16+
+        double percentAvail = mi.availMem / (double)mi.totalMem * 100.0;
+
+        TextView debug = gameActivity.findViewById(R.id.debugBox2);
+        debug.setText(Double.toString(availableMegs) + '\n' + Double.toString(percentAvail) + "%");
 
         // Empty grid components and button containers
         humanGrid.removeAllViews();
@@ -111,13 +125,24 @@ public class Display {
 
         computerGrid.removeAllViews();
 
-        tableGrid.removeAllViews();
-        tableButtons.clear();
-        buildButtons.clear();
+        if (updateTable) {
 
-        for (int i = 0; i < currentBuilds.size(); i++) {
-            ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
-            tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
+            if (!tableButtons.isEmpty()) {
+                tableGrid.removeAllViews();
+                tableButtons.clear();
+                buildButtons.clear();
+
+//                System.gc();
+            }
+
+            for (int i = 0; i < currentBuilds.size(); i++) {
+                ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
+                tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
+            }
+
+            for (int i = 0; i < tableCards.size(); i++) {
+                tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
+            }
         }
 
         for (int i = 0; i < humanHand.size(); i++) {
@@ -136,9 +161,7 @@ public class Display {
         computerPile.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
         computerGrid.addView(computerPile);
 
-        for (int i = 0; i < tableCards.size(); i++) {
-            tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
-        }
+
 
 
     }
@@ -190,6 +213,7 @@ public class Display {
         // Programmatically create and return an ImageButton based on card passed.
         // Whenever ImageButton is created, add it to currentButtons list
 
+        System.out.println("CREATE BUTTON CALLED");
         // Initializing ImageButton and basic resources
         ImageButton cardBtn = new ImageButton(appContext);
 

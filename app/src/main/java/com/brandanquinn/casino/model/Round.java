@@ -57,8 +57,6 @@ public class Round {
             dealToTable();
         }
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
-
         Player playerOne, playerTwo;
 
         if (humanIsFirst) {
@@ -74,7 +72,7 @@ public class Round {
 
         playerOne.setIsPlaying(true);
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
     }
 
     /**
@@ -110,7 +108,7 @@ public class Round {
             }
         }
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
+        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, false);
     }
 
     /**
@@ -139,7 +137,6 @@ public class Round {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                         return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                     } else {
                         return "Trail move cannot be made.";
@@ -152,7 +149,6 @@ public class Round {
                     possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                         return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                     } else {
                         return "Trail move cannot be made.";
@@ -161,7 +157,6 @@ public class Round {
                     possibleMoveSelected = build(movePair.first.get(0), movePair.first.get(1), new ArrayList<>(movePair.first.subList(2, movePair.first.size())), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                         return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                     } else {
                         return "Build move cannot be made with cards selected.";
@@ -170,7 +165,6 @@ public class Round {
                     possibleMoveSelected = capture(movePair.first.get(0), new ArrayList<Card>(movePair.first.subList(1, movePair.first.size())), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
                         return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
                     } else {
                         return "Capture move cannot be made with cards selected.";
@@ -193,6 +187,12 @@ public class Round {
         } else {
             gamePlayers.get(1).setIsPlaying(false);
             gamePlayers.get(0).setIsPlaying(true);
+        }
+
+        if (gamePlayers.get(0).handIsEmpty() && gamePlayers.get(1).handIsEmpty()) {
+            dealHands();
+        } else {
+            GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
         }
     }
 
@@ -296,7 +296,12 @@ public class Round {
        for (int i = 0; i < selectedCards.size(); i++) {
            if (selectedCards.get(i).getValue() == playedVal) {
                capturableCards.add(selectedCards.get(i));
-               selectedCards.remove(selectedCards.get(i));
+           }
+       }
+
+       for (int i = 0; i < capturableCards.size(); i++) {
+           if (selectedCards.contains(capturableCards.get(i))) {
+               selectedCards.remove(capturableCards.get(i));
            }
        }
 
@@ -346,22 +351,17 @@ public class Round {
      * @return 2d ArrayList of capturable sets of Cards
      */
     private ArrayList<ArrayList<Card>> getCapturableSets(ArrayList<Card> selectedCards, int playedVal) {
-        ArrayList<ArrayList<Card>> totalSets = new ArrayList<>();
-        ArrayList<Card> empty = new ArrayList<>();
-        totalSets.add(new ArrayList<>(empty));
+        ArrayList<String> totalSets = new ArrayList<>();
+        totalSets.add("");
 
         // Algo to get all possible sets.
         for (int i = 0; i < selectedCards.size(); i++) {
-            ArrayList<ArrayList<Card>> tempSet;
-            if (i == 0) {
-                tempSet = new ArrayList<>();
-                tempSet.add(new ArrayList<>(empty));
-            } else {
-                tempSet = new ArrayList<>(totalSets);
-            }
+            ArrayList<String> tempSet;
+            tempSet = new ArrayList<>(totalSets);
 
             for (int j = 0; j < tempSet.size(); j++) {
-                tempSet.get(j).add(selectedCards.get(i));
+                String newString = tempSet.get(j).concat(" " + selectedCards.get(i).getCardString());
+                tempSet.set(j, newString);
             }
             for (int j = 0; j < tempSet.size(); j++) {
                 totalSets.add(tempSet.get(j));
@@ -369,19 +369,51 @@ public class Round {
 
             tempSet.clear();
         }
+
+        // Need to convert totalSets from String -> cards
+        ArrayList<ArrayList<Card>> totalSetCards = getSetsAsCards(totalSets, selectedCards);
+
         ArrayList<ArrayList<Card>> capturableSets = new ArrayList<>();
         // Iterate through list of all sets add capturable ones to list.
-        for (int i = 0; i < totalSets.size(); i++) {
-            if (getSetValue(totalSets.get(i)) == playedVal && totalSets.get(i).size() > 1 && !capturableSets.contains(totalSets.get(i))) {
-                capturableSets.add(totalSets.get(i));
-                for (int j = 0; j < totalSets.get(i).size(); j++) {
+        for (int i = 0; i < totalSetCards.size(); i++) {
+            if (getSetValue(totalSetCards.get(i)) == playedVal && totalSetCards.get(i).size() > 1 && !capturableSets.contains(totalSetCards.get(i))) {
+                capturableSets.add(totalSetCards.get(i));
+                for (int j = 0; j < totalSetCards.get(i).size(); j++) {
                     // Remove capturable sets from selected cards list
-                    selectedCards.remove(totalSets.get(i).get(j));
+                    selectedCards.remove(totalSetCards.get(i).get(j));
                 }
             }
         }
 
         return capturableSets;
+    }
+
+    /**
+     * Maps the 2d ArrayList of card strings to their respective card objects and returns that newly generated List.
+     * @param stringSets, 2d ArrayList of card strings generated by power set algorithm.
+     * @param cards, ArrayList of Cards selected by user for move.
+     * @return 2d ArrayList of Card sets generated by power set algorithm.
+     */
+    private ArrayList<ArrayList<Card>> getSetsAsCards(ArrayList<String> stringSets, ArrayList<Card> cards) {
+        ArrayList<ArrayList<Card>> cardSets = new ArrayList<>();
+
+        ArrayList<Card> subset = new ArrayList<>();
+        for (int i = 0; i < stringSets.size(); i++) {
+            if (stringSets.get(i).length() > 3) {
+                String[] cardStrings = stringSets.get(i).split("\\s+");
+                for (int j = 0; j < cardStrings.length; j++) {
+                    for (int k = 0; k < cards.size(); k++) {
+                        if (cardStrings[j].equals(cards.get(k).getCardString())) {
+                            subset.add(cards.get(k));
+                        }
+                    }
+                }
+                cardSets.add(new ArrayList<>(subset));
+                subset.clear();
+            }
+        }
+
+        return cardSets;
     }
 
     /**
