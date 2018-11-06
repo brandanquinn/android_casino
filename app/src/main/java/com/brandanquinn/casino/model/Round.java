@@ -35,6 +35,14 @@ public class Round {
     }
 
     /**
+     * Allows controller to check if Deck is empty.
+     * @return boolean value determining whether or not deck is empty.
+     */
+    public boolean deckIsEmpty() {
+        return this.gameDeck.isEmpty();
+    }
+
+    /**
      * Function where most of the game occurs, rotates through Players turns and allows them to select and make proper moves.
      * @param humanIsFirst, boolean value used to determine which player goes first.
      * @param loadedGame, boolean value used to determine whether cards are preloaded are need to be dealt.
@@ -87,7 +95,7 @@ public class Round {
     /**
      * Properly deals hands to the Players
      */
-    private void dealHands() {
+    public void dealHands() {
         for (int i = 0; i < 4; i++) {
             Card newCard = this.gameDeck.drawCard();
             if (newCard.getIsRealCard()) {
@@ -101,6 +109,8 @@ public class Round {
                 this.gamePlayers.get(1).addToHand(newCard);
             }
         }
+
+        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum);
     }
 
     /**

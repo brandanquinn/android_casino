@@ -214,7 +214,7 @@ public class GameScreen extends AppCompatActivity {
                         }
                     }
                 }
-                clearSelection();
+                clearSelection(currentRound);
             }
         });
 
@@ -222,7 +222,7 @@ public class GameScreen extends AppCompatActivity {
         clearSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearSelection();
+                clearSelection(currentRound);
             }
         });
     }
@@ -290,7 +290,7 @@ public class GameScreen extends AppCompatActivity {
     /**
      * Clears out variables set during player's turn.
      */
-    private void clearSelection() {
+    private void clearSelection(Round currentRound) {
         moveType = "";
         cardSelectedFromHand = "";
         cardPlayedIntoBuild = "";
@@ -300,6 +300,12 @@ public class GameScreen extends AppCompatActivity {
 
         TextView cardsSelection = findViewById(R.id.cardsSelected);
         cardsSelection.setText("");
+
+        ArrayList<Player> gamePlayers = currentRound.getGamePlayers();
+        if (gamePlayers.get(0).handIsEmpty() && gamePlayers.get(1).handIsEmpty()) {
+            clearButtonListeners();
+            currentRound.dealHands();
+        }
     }
 
     /**
@@ -322,5 +328,23 @@ public class GameScreen extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private static void clearButtonListeners() {
+        ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
+        ArrayList<ImageButton> tableButtons = gameDisplay.getTableButtons();
+        ArrayList<Button> buildButtons = gameDisplay.getBuildButtons();
+
+        for (int i = 0; i < myHand.size(); i++) {
+            myHand.get(i).setOnClickListener(null);
+        }
+
+        for (int i = 0; i < tableButtons.size(); i++) {
+            tableButtons.get(i).setOnClickListener(null);
+        }
+
+        for (int i = 0; i < buildButtons.size(); i++) {
+            buildButtons.get(i).setOnClickListener(null);
+        }
     }
 }

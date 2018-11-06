@@ -22,7 +22,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Display {
-    private ArrayList<ImageButton> computerButtons;
+    private ArrayList<ImageView> computerButtons;
     private ArrayList<ImageButton> humanButtons;
     private ArrayList<ImageButton> tableButtons;
     private ArrayList<Button> buildButtons;
@@ -33,7 +33,6 @@ public class Display {
 
     public Display(Context context) {
         this.humanButtons = new ArrayList<>();
-        this.computerButtons = new ArrayList<>();
         this.tableButtons = new ArrayList<>();
         this.buildButtons = new ArrayList<>();
         this.appContext = context;
@@ -52,8 +51,7 @@ public class Display {
     /**
      * Getter for computerButtons private member variable
      * @return ArrayList of buttons in the computer's hand
-     */
-    public ArrayList<ImageButton> getComputerButtons() { return this.computerButtons; }
+    /
 
     /**
      * Getter for tableButtons private member variable
@@ -112,7 +110,6 @@ public class Display {
         humanButtons.clear();
 
         computerGrid.removeAllViews();
-        computerButtons.clear();
 
         tableGrid.removeAllViews();
         tableButtons.clear();
@@ -132,7 +129,7 @@ public class Display {
         humanGrid.addView(humanPile);
 
         for (int i = 0; i < computerHand.size(); i++) {
-            computerGrid.addView(createButton(computerHand.get(i), "computerHand", computerHand.size()));
+            computerGrid.addView(createComputerView(computerHand.get(i)));
         }
         computerPile = new Button(appContext);
         computerPile.setText("Computer Pile");
@@ -202,15 +199,12 @@ public class Display {
         }
 
         String cardImageResource = gameCard.getImageResourceName();
-        int imageID = appContext.getResources().getIdentifier(cardImageResource, "drawable", appContext.getPackageName());
+        int imageID = appContext.getResources().getIdentifier(cardImageResource, "mipmap", appContext.getPackageName());
 
         // Setting ImageButton to proper card image
         cardBtn.setImageResource(imageID);
         cardBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         cardBtn.setTag(gameCard.getCardString());
-
-
-        TextView debug = this.gameActivity.findViewById(R.id.debugBox);
 
         // Max width of table is 1268 dp
         if (layoutId == "tableCards" && numCards > 8) {
@@ -222,13 +216,32 @@ public class Display {
 
         if (layoutId == "tableCards") {
             this.tableButtons.add(cardBtn);
-        } else if (layoutId == "humanHand") {
-            this.humanButtons.add(cardBtn);
         } else {
-            this.computerButtons.add(cardBtn);
+            this.humanButtons.add(cardBtn);
         }
 
         return cardBtn;
+    }
+
+    private ImageView createComputerView(Card gameCard) {
+        ImageView cardView = new ImageView(appContext);
+
+        if (gameCard.getLockedToBuild()) {
+            int lightBlue = Color.parseColor("#7bb3ff");
+            cardView.setBackgroundColor(lightBlue);
+        }
+
+        String cardImageResource = gameCard.getImageResourceName();
+        int imageID = appContext.getResources().getIdentifier(cardImageResource, "mipmap", appContext.getPackageName());
+
+        // Setting ImageButton to proper card image
+        cardView.setImageResource(imageID);
+        cardView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        cardView.setTag(gameCard.getCardString());
+
+        cardView.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+
+        return cardView;
     }
 
     /**
