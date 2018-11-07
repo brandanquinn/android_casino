@@ -129,7 +129,7 @@ public class Build {
      * Increase and claim an opponent's build.
      * @param increasingCard, Card object to increase build with.
      */
-    public void increaseBuild(Card increasingCard) {
+    public void increaseBuild(Card increasingCard, String newOwner) {
         this.totalBuildCards.get(0).add(increasingCard);
         int sum = 0;
 
@@ -137,5 +137,6 @@ public class Build {
             sum += totalBuildCards.get(0).get(i).getValue();
         }
         setSumVal(sum);
+        this.buildOwner = newOwner;
     }
 }

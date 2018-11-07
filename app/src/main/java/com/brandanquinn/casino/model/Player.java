@@ -156,8 +156,8 @@ public class Player {
      * Play function that will be overloaded by Human / Computer classes.
      * @return
      */
-    public Pair<ArrayList<Card>, String> play() {
-       return new Pair<>(new ArrayList<Card>(), "");
+    public Move play() {
+       return new Move();
     }
 
     /**

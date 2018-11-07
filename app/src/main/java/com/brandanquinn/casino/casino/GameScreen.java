@@ -117,6 +117,7 @@ public class GameScreen extends AppCompatActivity {
             public void onClick(View v) {
                 cardSelectedFromHand = "";
                 cardsSelectedFromTable.clear();
+                cardPlayedIntoBuild = "";
                 moveType = "trail";
                 moveDisplay.setText("Trail selected.");
             }
@@ -127,6 +128,7 @@ public class GameScreen extends AppCompatActivity {
             public void onClick(View v) {
                 cardSelectedFromHand = "";
                 cardsSelectedFromTable.clear();
+                cardPlayedIntoBuild = "";
                 moveType = "capture";
                 moveDisplay.setText("Capture selected.");
             }
@@ -137,8 +139,20 @@ public class GameScreen extends AppCompatActivity {
             public void onClick(View v) {
                 cardSelectedFromHand = "";
                 cardsSelectedFromTable.clear();
+                cardPlayedIntoBuild = "";
                 moveType = "build";
                 moveDisplay.setText("Build selected");
+            }
+        });
+        Button increase = findViewById(R.id.increaseButton);
+        increase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardSelectedFromHand = "";
+                cardsSelectedFromTable.clear();
+                cardPlayedIntoBuild = "";
+                moveType = "increase";
+                moveDisplay.setText("Increase build selected.");
             }
         });
     }
@@ -154,19 +168,19 @@ public class GameScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (gamePlayers.get(0).getIsPlaying()) {
-                    if (gamePlayers.get(0).getPlayerString() == "Computer") {
+                    if (gamePlayers.get(0).getPlayerString().equals("Computer")) {
                         // If current player is a computer
                         Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                         toast.show();
                     } else {
                         // If current player is a human
-                        if (moveType == "trail" && !cardSelectedFromHand.isEmpty()) {
+                        if (moveType.equals("trail") && !cardSelectedFromHand.isEmpty()) {
                             // Make trail move.
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType == "build" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("build") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setCardPlayedIntoBuild(cardPlayedIntoBuild);
@@ -174,10 +188,18 @@ public class GameScreen extends AppCompatActivity {
                             gamePlayers.get(0).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType == "capture" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("capture") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
+                            gamePlayers.get(0).setMoveSelected(moveType);
+                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if (moveType.equals("increase") && !cardSelectedFromHand.isEmpty() &&!cardPlayedIntoBuild.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                            // Setup move pair for Human
+                            gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
+                            gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
+                            gamePlayers.get(0).setCardPlayedIntoBuild(cardPlayedIntoBuild);
                             gamePlayers.get(0).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
@@ -190,13 +212,13 @@ public class GameScreen extends AppCompatActivity {
                         toast.show();
                     } else {
                         // If current player is a human
-                        if (moveType == "trail" && !cardSelectedFromHand.isEmpty()) {
+                        if (moveType.equals("trail") && !cardSelectedFromHand.isEmpty()) {
                             // Make trail move.
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType == "build" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("build") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setCardPlayedIntoBuild(cardPlayedIntoBuild);
@@ -204,17 +226,25 @@ public class GameScreen extends AppCompatActivity {
                             gamePlayers.get(1).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType == "capture" && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("capture") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(1).setMoveSelected(moveType);
                             Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
+                        } else if (moveType.equals("increase") && !cardSelectedFromHand.isEmpty() && !cardPlayedIntoBuild.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                            // Setup move pair for Human
+                            gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
+                            gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
+                            gamePlayers.get(1).setCardPlayedIntoBuild(cardPlayedIntoBuild);
+                            gamePlayers.get(1).setMoveSelected(moveType);
+                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            toast.show();
                         }
                     }
                 }
-                clearSelection(currentRound);
+                clearSelection();
             }
         });
 
@@ -222,7 +252,7 @@ public class GameScreen extends AppCompatActivity {
         clearSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearSelection(currentRound);
+                clearSelection();
             }
         });
     }
@@ -242,7 +272,7 @@ public class GameScreen extends AppCompatActivity {
             myHand.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (moveType == "build" && !cardSelectedFromHand.isEmpty()) {
+                    if ((moveType.equals("build") || moveType.equals("increase") ) && !cardSelectedFromHand.isEmpty()) {
                         setCardPlayedIntoBuild((String)v.getTag());
                         Toast toast = Toast.makeText(context, cardPlayedIntoBuild + " selected to play into build.", Toast.LENGTH_SHORT);
                         toast.show();
@@ -255,7 +285,7 @@ public class GameScreen extends AppCompatActivity {
             });
         }
 
-        if (moveType != "trail") {
+        if (!moveType.equals("trail")) {
 
             for (int i = 0; i < tableButtons.size(); i++) {
                 tableButtons.get(i).setOnClickListener(new View.OnClickListener() {
@@ -290,7 +320,7 @@ public class GameScreen extends AppCompatActivity {
     /**
      * Clears out variables set during player's turn.
      */
-    private void clearSelection(Round currentRound) {
+    private void clearSelection() {
         moveType = "";
         cardSelectedFromHand = "";
         cardPlayedIntoBuild = "";
@@ -300,8 +330,6 @@ public class GameScreen extends AppCompatActivity {
 
         TextView cardsSelection = findViewById(R.id.cardsSelected);
         cardsSelection.setText("");
-
-        ArrayList<Player> gamePlayers = currentRound.getGamePlayers();
     }
 
     /**
@@ -324,23 +352,5 @@ public class GameScreen extends AppCompatActivity {
                 toast.show();
             }
         });
-    }
-
-    private static void clearButtonListeners() {
-        ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
-        ArrayList<ImageButton> tableButtons = gameDisplay.getTableButtons();
-        ArrayList<Button> buildButtons = gameDisplay.getBuildButtons();
-
-        for (int i = 0; i < myHand.size(); i++) {
-            myHand.get(i).setOnClickListener(null);
-        }
-
-        for (int i = 0; i < tableButtons.size(); i++) {
-            tableButtons.get(i).setOnClickListener(null);
-        }
-
-        for (int i = 0; i < buildButtons.size(); i++) {
-            buildButtons.get(i).setOnClickListener(null);
-        }
     }
 }

@@ -26,13 +26,13 @@ public class Computer extends Player{
      * Computer play function that will call the AI from the Parent class Player.
      * @return Pair selected by the AI for move to be made.
      */
-    public Pair<ArrayList<Card>, String> play() {
-        ArrayList<Card> cards = new ArrayList<>();
+    public Move play() {
+        Card cardSelected = new Card();
 
         if (!handIsEmpty()) {
-            cards.add(this.hand.get(0));
+            cardSelected = this.hand.get(0);
         }
 
-        return new Pair<>(cards, "trail");
+        return new Move("trail", cardSelected, new Card(), new ArrayList<Card>(), new ArrayList<Build>());
     }
 }

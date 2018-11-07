@@ -131,13 +131,13 @@ public class Round {
     public String playTurn(Player gamePlayer) {
         boolean possibleMoveSelected = false;
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
-            Pair<ArrayList<Card>, String> movePair = gamePlayer.play();
-            if (gamePlayer.getPlayerString() == "Computer") {
-                if (movePair.first.get(0).getIsRealCard()) {
-                    possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
+            Move moveObj = gamePlayer.play();
+            if (gamePlayer.getPlayerString().equals("Computer")) {
+                if (moveObj.getCardSelectedFromHand().getIsRealCard()) {
+                    possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                     } else {
                         return "Trail move cannot be made.";
                     }
@@ -145,35 +145,45 @@ public class Round {
                     return "Move cannot be made.";
                 }
             } else {
-                if (movePair.second == "trail") {
-                    possibleMoveSelected = trail(movePair.first.get(0), gamePlayer);
+                if (moveObj.getMoveType().equals("trail")) {
+                    possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                     } else {
                         return "Trail move cannot be made.";
                     }
-                } else if (movePair.second == "build") {
-                    possibleMoveSelected = build(movePair.first.get(0), movePair.first.get(1), new ArrayList<>(movePair.first.subList(2, movePair.first.size())), gamePlayer);
+                } else if (moveObj.getMoveType().equals("build")) {
+                    possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                     } else {
                         return "Build move cannot be made with cards selected.";
                     }
-                } else if (movePair.second == "capture") {
-                    possibleMoveSelected = capture(movePair.first.get(0), new ArrayList<Card>(movePair.first.subList(1, movePair.first.size())), gamePlayer);
+                } else if (moveObj.getMoveType().equals("capture")) {
+                    possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
                     if (possibleMoveSelected) {
                         changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + movePair.second + " with card: " + movePair.first.get(0).getCardString();
+                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                     } else {
                         return "Capture move cannot be made with cards selected.";
+                    }
+                } else if (moveObj.getMoveType().equals("increase")) {
+                    // increase
+                    possibleMoveSelected = increase(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                    if (possibleMoveSelected) {
+                        changeTurn();
+                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                    } else {
+                        return "Cannot increase build with cards selected.";
                     }
                 }
             }
 
         }
 
+        changeTurn();
         return "Move cannot be made.";
     }
 
@@ -278,15 +288,24 @@ public class Round {
         }
     }
 
-    private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, Player gamePlayer) {
+    private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, ArrayList<Build> selectedBuilds, Player gamePlayer) {
        ArrayList<Build> capturableBuilds = new ArrayList<>();
-       ArrayList<Build> currentBuilds = this.gameTable.getCurrentBuilds();
 
-       for (int i = 0; i < currentBuilds.size(); i++) {
-           if (currentBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
-                   || (currentBuilds.get(i).getBuildOwner() != gamePlayer.getPlayerString() && currentBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
-               capturableBuilds.add(currentBuilds.get(i));
+       for (int i = 0; i < selectedBuilds.size(); i++) {
+           if (selectedBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
+                   || (selectedBuilds.get(i).getBuildOwner() != gamePlayer.getPlayerString() && selectedBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
+               capturableBuilds.add(selectedBuilds.get(i));
            }
+       }
+
+       for (int i = 0; i < capturableBuilds.size(); i++) {
+           if (selectedBuilds.contains(capturableBuilds.get(i))) {
+               selectedBuilds.remove(capturableBuilds.get(i));
+           }
+       }
+
+       if (!selectedBuilds.isEmpty()) {
+           return false;
        }
 
        int playedVal = cardPlayed.getValue();
@@ -376,7 +395,7 @@ public class Round {
         ArrayList<ArrayList<Card>> capturableSets = new ArrayList<>();
         // Iterate through list of all sets add capturable ones to list.
         for (int i = 0; i < totalSetCards.size(); i++) {
-            if (getSetValue(totalSetCards.get(i)) == playedVal && totalSetCards.get(i).size() > 1 && !capturableSets.contains(totalSetCards.get(i))) {
+            if (getSetValue(totalSetCards.get(i)) == playedVal && totalSetCards.get(i).size() > 1 && noRepeatCardsInSet(capturableSets, totalSetCards.get(i))) {
                 capturableSets.add(totalSetCards.get(i));
                 for (int j = 0; j < totalSetCards.get(i).size(); j++) {
                     // Remove capturable sets from selected cards list
@@ -386,6 +405,24 @@ public class Round {
         }
 
         return capturableSets;
+    }
+
+    /**
+     * Used to make sure duplicate cards are not accidentally captured in sets.
+     * @param capturableSets, 2d ArrayList of sets that are already capturable
+     * @param possibleSet, ArrayList of Cards that are being considered a capturable set
+     * @return boolean value determining whether or not cards in the set have already been set as capturable.
+     */
+    private boolean noRepeatCardsInSet(ArrayList<ArrayList<Card>> capturableSets, ArrayList<Card> possibleSet) {
+        for (int i = 0; i < capturableSets.size(); i++) {
+            for (int j = 0; j < possibleSet.size(); j++){
+                if (capturableSets.get(i).contains(possibleSet.get(j))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -459,5 +496,30 @@ public class Round {
         }
 
         return null;
+    }
+
+    private boolean increase(Card lockedCard, Card playedCard, ArrayList<Build> buildsSelected, Player gamePlayer) {
+        if (buildsSelected.isEmpty()) {
+            return false;
+        }
+
+        if (buildsSelected.size() > 1) {
+            return false;
+        }
+
+        if (buildsSelected.get(0).getIsMultiBuild()) {
+            return false;
+        }
+
+        if ((lockedCard.getValue() == playedCard.getValue() + buildsSelected.get(0).getSumVal())
+                && !gamePlayer.getPlayerString().equals(buildsSelected.get(0).getBuildOwner())) {
+            // increase is possible.
+            buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerString());
+            buildsSelected.get(0).getSumCard().setLockedToBuild(false);
+            buildsSelected.get(0).setSumCard(lockedCard);
+        }
+
+        return false;
+
     }
 }
