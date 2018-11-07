@@ -18,7 +18,11 @@ public class Move {
      * Default constructor for Move class
      */
     public Move() {
-
+        moveType = "";
+        cardSelectedFromHand = new Card();
+        cardPlayedFromHand = new Card();
+        cardsSelectedFromTable = new ArrayList<>();
+        buildsSelectedFromTable = new ArrayList<>();
     }
 
     /**
@@ -44,10 +48,26 @@ public class Move {
     public String getMoveType() { return this.moveType; }
 
     /**
+     * Setter for moveType private member variable
+     * @param moveType, String move type
+     */
+    public void setMoveType(String moveType) {
+        this.moveType = moveType;
+    }
+
+    /**
      * Getter for cardSelectedFromHand private member variable
      * @return Card object selected from hand
      */
     public Card getCardSelectedFromHand() { return this.cardSelectedFromHand; }
+
+    /**
+     * Setter for cardSelectedFromHand private member variable
+     * @param cardSelectedFromHand, Card object selected from hand
+     */
+    public void setCardSelectedFromHand(Card cardSelectedFromHand) {
+        this.cardSelectedFromHand = cardSelectedFromHand;
+    }
 
     /**
      * Getter for cardPlayedFromHand private member variable
@@ -55,6 +75,14 @@ public class Move {
      */
     public Card getCardPlayedFromHand() {
         return cardPlayedFromHand;
+    }
+
+    /**
+     * Setter for cardPlayedFromHand private member variable
+     * @param cardPlayedFromHand, Card object played from hand
+     */
+    public void setCardPlayedFromHand(Card cardPlayedFromHand) {
+        this.cardPlayedFromHand = cardPlayedFromHand;
     }
 
     /**
@@ -66,10 +94,30 @@ public class Move {
     }
 
     /**
+     * Setter for cardsSelectedFromTable private member variable
+     * @param cardsSelectedFromTable, ArrayList of card objects selected from the table
+     */
+    public void setCardsSelectedFromTable(ArrayList<Card> cardsSelectedFromTable) {
+        this.cardsSelectedFromTable = cardsSelectedFromTable;
+    }
+
+    /**
      * Getter for buildsSelectedFromTable private member variable
      * @return ArrayList of Build objects selected from the table
      */
     public ArrayList<Build> getBuildsSelectedFromTable() {
         return buildsSelectedFromTable;
+    }
+
+    /**
+     * Setter for buildSelectedFromTable private member variable
+     * @param buildsSelectedFromTable, ArrayList of Build objects selected from the table.
+     */
+    public void setBuildsSelectedFromTable(ArrayList<Build> buildsSelectedFromTable) {
+        this.buildsSelectedFromTable = buildsSelectedFromTable;
+    }
+
+    public void addBuildSelectedFromTable(Build buildSelectedFromTable) {
+        this.buildsSelectedFromTable.add(buildSelectedFromTable);
     }
 }

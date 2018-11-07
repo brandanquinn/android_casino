@@ -1,10 +1,7 @@
 package com.brandanquinn.casino.model;
 
-import android.util.Pair;
-
 import com.brandanquinn.casino.casino.GameScreen;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Round {
@@ -108,7 +105,7 @@ public class Round {
             }
         }
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, false);
+        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
     }
 
     /**
@@ -132,52 +129,38 @@ public class Round {
         boolean possibleMoveSelected = false;
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
             Move moveObj = gamePlayer.play();
-            if (gamePlayer.getPlayerString().equals("Computer")) {
-                if (moveObj.getCardSelectedFromHand().getIsRealCard()) {
-                    possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
-                    if (possibleMoveSelected) {
-                        changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
-                    } else {
-                        return "Trail move cannot be made.";
-                    }
+            if (moveObj.getMoveType().equals("trail")) {
+                possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
+                if (possibleMoveSelected) {
+                    changeTurn();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
-                    return "Move cannot be made.";
+                    return "Trail move cannot be made.";
                 }
-            } else {
-                if (moveObj.getMoveType().equals("trail")) {
-                    possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
-                    if (possibleMoveSelected) {
-                        changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
-                    } else {
-                        return "Trail move cannot be made.";
-                    }
-                } else if (moveObj.getMoveType().equals("build")) {
-                    possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer);
-                    if (possibleMoveSelected) {
-                        changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
-                    } else {
-                        return "Build move cannot be made with cards selected.";
-                    }
-                } else if (moveObj.getMoveType().equals("capture")) {
-                    possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
-                    if (possibleMoveSelected) {
-                        changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
-                    } else {
-                        return "Capture move cannot be made with cards selected.";
-                    }
-                } else if (moveObj.getMoveType().equals("increase")) {
-                    // increase
-                    possibleMoveSelected = increase(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
-                    if (possibleMoveSelected) {
-                        changeTurn();
-                        return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
-                    } else {
-                        return "Cannot increase build with cards selected.";
-                    }
+            } else if (moveObj.getMoveType().equals("build")) {
+                possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer);
+                if (possibleMoveSelected) {
+                    changeTurn();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                } else {
+                    return "Build move cannot be made with cards selected.";
+                }
+            } else if (moveObj.getMoveType().equals("capture")) {
+                possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                if (possibleMoveSelected) {
+                    changeTurn();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                } else {
+                    return "Capture move cannot be made with cards selected.";
+                }
+            } else if (moveObj.getMoveType().equals("increase")) {
+                // increase
+                possibleMoveSelected = increase(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                if (possibleMoveSelected) {
+                    changeTurn();
+                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                } else {
+                    return "Cannot increase build with cards selected.";
                 }
             }
 

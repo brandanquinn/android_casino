@@ -27,12 +27,6 @@ public class Computer extends Player{
      * @return Pair selected by the AI for move to be made.
      */
     public Move play() {
-        Card cardSelected = new Card();
-
-        if (!handIsEmpty()) {
-            cardSelected = this.hand.get(0);
-        }
-
-        return new Move("trail", cardSelected, new Card(), new ArrayList<Card>(), new ArrayList<Build>());
+        return getHelp();
     }
 }

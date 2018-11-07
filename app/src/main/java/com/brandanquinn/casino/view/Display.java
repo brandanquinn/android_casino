@@ -131,8 +131,6 @@ public class Display {
                 tableGrid.removeAllViews();
                 tableButtons.clear();
                 buildButtons.clear();
-
-//                System.gc();
             }
 
             for (int i = 0; i < currentBuilds.size(); i++) {
