@@ -206,7 +206,7 @@ public class GameScreen extends AppCompatActivity {
                         }
                     }
                 } else {
-                    if (gamePlayers.get(1).getPlayerString() == "Computer") {
+                    if (gamePlayers.get(1).getPlayerString().equals("Computer")) {
                         // If current player is a computer
                         Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                         toast.show();

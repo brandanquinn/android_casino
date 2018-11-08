@@ -388,11 +388,11 @@ public class Player {
 
         if (cardSelected.getLockedToBuild()) {
             for (int i = 0; i < this.hand.size(); i++) {
-                possibleBuildVals.add(createBuilds(cardSelected, hand.get(i), true, makingMove));
+                possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), true, makingMove));
             }
         } else {
             for (int i = 0; i < this.hand.size(); i++) {
-                possibleBuildVals.add(createBuilds(cardSelected, hand.get(i), false, makingMove));
+                possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), false, makingMove));
             }
         }
 
@@ -485,7 +485,7 @@ public class Player {
         }
 
         int playedVal = cardPlayed.getValue();
-        ArrayList<Card> availCards = this.gameTable.getTableCards();
+        ArrayList<Card> availCards = new ArrayList<>(this.gameTable.getTableCards());
         ArrayList<Card> capturableCards = new ArrayList<>();
 
         for (int i = 0; i < availCards.size(); i++) {
@@ -532,9 +532,10 @@ public class Player {
      * @param buildSum, int sum value of the build
      */
     private void filterBuildOptions(ArrayList<Card> availableCards, int playedVal, int buildSum) {
-        for (int i = 0; i < availableCards.size(); i++) {
-            if (availableCards.get(i).getValue() + playedVal > buildSum) {
-                availableCards.remove(availableCards.get(i));
+        ArrayList<Card> tempSet = new ArrayList<>(availableCards);
+        for (int i = 0; i < tempSet.size(); i++) {
+            if (tempSet.get(i).getValue() + playedVal > buildSum) {
+                availableCards.remove(tempSet.get(i));
             }
         }
     }

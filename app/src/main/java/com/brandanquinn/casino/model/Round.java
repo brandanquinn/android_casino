@@ -213,8 +213,6 @@ public class Round {
      * @return
      */
     private boolean build(Card lockedCard, Card playedCard, ArrayList<Card> selectedFromTable, Player gamePlayer) {
-        ArrayList<Card> tableCards = new ArrayList<>(this.gameTable.getTableCards());
-        ArrayList<Card> filteredCards = new ArrayList<>(tableCards);
         boolean extendingBuild = false;
 
         if (lockedCard.getLockedToBuild()) { extendingBuild = true; }
@@ -276,15 +274,13 @@ public class Round {
 
        for (int i = 0; i < selectedBuilds.size(); i++) {
            if (selectedBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
-                   || (selectedBuilds.get(i).getBuildOwner() != gamePlayer.getPlayerString() && selectedBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
+                   || (!selectedBuilds.get(i).getBuildOwner().equals(gamePlayer.getPlayerString()) && selectedBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
                capturableBuilds.add(selectedBuilds.get(i));
            }
        }
 
        for (int i = 0; i < capturableBuilds.size(); i++) {
-           if (selectedBuilds.contains(capturableBuilds.get(i))) {
-               selectedBuilds.remove(capturableBuilds.get(i));
-           }
+           selectedBuilds.remove(capturableBuilds.get(i));
        }
 
        if (!selectedBuilds.isEmpty()) {
@@ -302,9 +298,7 @@ public class Round {
        }
 
        for (int i = 0; i < capturableCards.size(); i++) {
-           if (selectedCards.contains(capturableCards.get(i))) {
-               selectedCards.remove(capturableCards.get(i));
-           }
+           selectedCards.remove(capturableCards.get(i));
        }
 
        ArrayList<ArrayList<Card>> capturableSets = getCapturableSets(selectedCards, playedVal);
@@ -322,23 +316,17 @@ public class Round {
        ArrayList<Card> pileAdditions = new ArrayList<>();
        pileAdditions.add(cardPlayed);
 
-       for (int i = 0; i < capturableCards.size(); i++) {
-           pileAdditions.add(capturableCards.get(i));
-       }
+       pileAdditions.addAll(capturableCards);
 
        for (int i = 0; i < capturableSets.size(); i++) {
-           for (int j = 0; j < capturableSets.get(i).size(); j++) {
-               pileAdditions.add(capturableSets.get(i).get(j));
-           }
+           pileAdditions.addAll(capturableSets.get(i));
        }
 
        for (int i = 0; i < capturableBuilds.size(); i++) {
            capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
            ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
            for (int j = 0; j < tempBuildCards.size(); j++) {
-               for (int k = 0; k < tempBuildCards.get(j).size(); k++) {
-                   pileAdditions.add(tempBuildCards.get(j).get(k));
-               }
+               pileAdditions.addAll(tempBuildCards.get(j));
            }
        }
        gamePlayer.addToPile(pileAdditions);
@@ -500,6 +488,9 @@ public class Round {
             buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerString());
             buildsSelected.get(0).getSumCard().setLockedToBuild(false);
             buildsSelected.get(0).setSumCard(lockedCard);
+            lockedCard.setLockedToBuild(true);
+
+            return true;
         }
 
         return false;
