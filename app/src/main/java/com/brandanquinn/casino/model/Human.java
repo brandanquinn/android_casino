@@ -14,7 +14,6 @@ public class Human extends Player {
      */
     public Human() {
         setScore(0);
-        setPlayerString("Human");
     }
 
     /**
@@ -23,14 +22,27 @@ public class Human extends Player {
      */
     public Human(int score) {
         setScore(score);
-        setPlayerString("Human");
+    }
+
+    /**
+     * Polymorphic function to get player identity.
+     * @return String representing player identity.
+     */
+    @Override
+    public String getPlayerIdentity() {
+        return "Human";
     }
 
     /**
      * Play function that interacts with controller to get move selection from user.
      * @return Pair that holds Card selected for play as well as move selected.
      */
+    @Override
     public Move play() {
+        if (moveSelected.equals("help")) {
+            return getHelp();
+        }
+
         Card cardSelected = new Card();
         for (int i = 0; i < this.hand.size(); i++) {
             if (this.hand.get(i).getCardString().equals(cardSelectedFromHand)) {

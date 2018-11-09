@@ -40,14 +40,16 @@ public class Deck {
      * @return Card object to be dealt or used by Players.
      */
     public Card drawCard() {
-        if (gameDeck.isEmpty()) {
+        if (this.gameDeck.isEmpty()) {
             return new Card();
+        } else {
+            Card cardDrawn = this.topOfDeck;
+            gameDeck.remove(cardDrawn);
+            if (!this.gameDeck.isEmpty()) {
+                this.topOfDeck = gameDeck.get(0);
+            }
+            return cardDrawn;
         }
-
-        Card cardDrawn = this.topOfDeck;
-        gameDeck.remove(cardDrawn);
-        this.topOfDeck = gameDeck.get(0);
-        return cardDrawn;
     }
 
     /**

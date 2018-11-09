@@ -3,8 +3,12 @@ package com.brandanquinn.casino.view;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -82,9 +86,9 @@ public class Display {
      * @param gameTable, Table object used to access cards/builds on the table
      * @param roundNum, int used to keep track of current round number
      */
-    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying, boolean updateTable) {
+    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying) {
 
-        displayCards(gamePlayers, gameTable, updateTable);
+        displayCards(gamePlayers, gameTable);
         displayRoundNum(roundNum);
         displayScores(gamePlayers, whoIsPlaying);
     }
@@ -94,7 +98,7 @@ public class Display {
      * @param gamePlayers, ArrayList of game players
      * @param gameTable, Table object used to access cards/builds on the table
      */
-    private void displayCards(ArrayList<Player> gamePlayers, Table gameTable, boolean updateTable) {
+    private void displayCards(ArrayList<Player> gamePlayers, Table gameTable) {
         // For each card in human hand - create an image button with proper card image
         // Assign button to a column in the respective players grid
         ArrayList<Card> humanHand = gamePlayers.get(0).getHand();
@@ -125,22 +129,16 @@ public class Display {
 
         computerGrid.removeAllViews();
 
-        if (updateTable) {
+        tableGrid.removeAllViews();
+        tableButtons.clear();
+        buildButtons.clear();
 
-            if (!tableButtons.isEmpty()) {
-                tableGrid.removeAllViews();
-                tableButtons.clear();
-                buildButtons.clear();
-            }
-
-            for (int i = 0; i < currentBuilds.size(); i++) {
-                ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
-                tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
-            }
-
-            for (int i = 0; i < tableCards.size(); i++) {
-                tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
-            }
+        for (int i = 0; i < currentBuilds.size(); i++) {
+            ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
+            tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
+        }
+        for (int i = 0; i < tableCards.size(); i++) {
+            tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
         }
 
         for (int i = 0; i < humanHand.size(); i++) {
@@ -197,7 +195,6 @@ public class Display {
         buildButtons.add(buildButton);
 
         return buildButton;
-
     }
 
     /**
@@ -224,7 +221,7 @@ public class Display {
         int imageID = appContext.getResources().getIdentifier(cardImageResource, "mipmap", appContext.getPackageName());
 
         // Setting ImageButton to proper card image
-        cardBtn.setImageResource(imageID);
+        setScaledImageButton(cardBtn, imageID);
         cardBtn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         cardBtn.setTag(gameCard.getCardString());
 
@@ -245,6 +242,11 @@ public class Display {
         return cardBtn;
     }
 
+    /**
+     * Creates ImageView for each card in computer player's hand.
+     * @param gameCard, Card obj from player's hand.
+     * @return ImageView created from card obj reference.
+     */
     private ImageView createComputerView(Card gameCard) {
         ImageView cardView = new ImageView(appContext);
 
@@ -257,7 +259,7 @@ public class Display {
         int imageID = appContext.getResources().getIdentifier(cardImageResource, "mipmap", appContext.getPackageName());
 
         // Setting ImageButton to proper card image
-        cardView.setImageResource(imageID);
+        setScaledImage(cardView, imageID);
         cardView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         cardView.setTag(gameCard.getCardString());
 
@@ -293,5 +295,95 @@ public class Display {
         // Who is playing
         TextView debug = this.gameActivity.findViewById(R.id.debugBox);
         debug.setText(whoIsPlaying);
+    }
+
+    /**
+     * Used to optimize memory storage to try to prevent Java out of memory error.
+     * @param imageView, ImageView created for computer player's hand.
+     * @param resId, Image resource ID generated for Card background.
+     */
+    private void setScaledImage(ImageView imageView, final int resId) {
+        final ImageView iv = imageView;
+        ViewTreeObserver viewTreeObserver = iv.getViewTreeObserver();
+        viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                iv.getViewTreeObserver().removeOnPreDrawListener(this);
+                int imageViewHeight = iv.getMeasuredHeight();
+                int imageViewWidth = iv.getMeasuredWidth();
+                iv.setImageBitmap(
+                        decodeSampledBitmapFromResource(gameActivity.getResources(),
+                                resId, imageViewWidth, imageViewHeight));
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Used to optimize memory storage to try to prevent Java out of memory error
+     * @param imageButton, ImageButton created for Human hand / table
+     * @param resId, Image resource ID generated for Card background.
+     */
+    private void setScaledImageButton(ImageButton imageButton, final int resId) {
+        final ImageButton ib = imageButton;
+        ViewTreeObserver viewTreeObserver = ib.getViewTreeObserver();
+        viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                ib.getViewTreeObserver().removeOnPreDrawListener(this);
+                int imageViewHeight = ib.getMeasuredHeight();
+                int imageViewWidth = ib.getMeasuredWidth();
+                ib.setImageBitmap(
+                        decodeSampledBitmapFromResource(gameActivity.getResources(),
+                                resId, imageViewWidth, imageViewHeight));
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Function used to decode the bitmap image in a more efficient manor.
+     * @param res, List of image resources from App context
+     * @param resId, Image resource ID used for specific View
+     * @param reqWidth, Image width
+     * @param reqHeight, Image height
+     * @return
+     */
+    private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                          int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds = true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }

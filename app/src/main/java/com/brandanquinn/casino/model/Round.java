@@ -9,6 +9,7 @@ public class Round {
     private Deck gameDeck;
     private Table gameTable;
     private ArrayList<Player> gamePlayers;
+    private boolean roundIsOver;
 
     /**
      * Overloaded constructor for Round class.
@@ -20,6 +21,7 @@ public class Round {
         this.gameDeck = new Deck();
         this.gameTable = new Table();
         this.gamePlayers = gamePlayers;
+        this.roundIsOver = false;
     }
 
 
@@ -29,6 +31,22 @@ public class Round {
      */
     public ArrayList<Player> getGamePlayers() {
         return this.gamePlayers;
+    }
+
+    /**
+     * Getter for roundNum private member variable
+     * @return int current round number.
+     */
+    public int getRoundNum() {
+        return roundNum;
+    }
+
+    /**
+     * Getter for gameTable private member variable
+     * @return Table object holding cards / builds
+     */
+    public Table getGameTable() {
+        return this.gameTable;
     }
 
     /**
@@ -69,7 +87,7 @@ public class Round {
 
         playerOne.setIsPlaying(true);
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
+        GameScreen.updateActivity(roundIsOver);
     }
 
     /**
@@ -80,7 +98,7 @@ public class Round {
         String playing = "Unknown";
         for (int i = 0; i < this.gamePlayers.size(); i++) {
             if (gamePlayers.get(i).getIsPlaying()) {
-                playing = gamePlayers.get(i).getPlayerString();
+                playing = gamePlayers.get(i).getPlayerIdentity();
             }
         }
 
@@ -105,7 +123,14 @@ public class Round {
             }
         }
 
-        GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
+        GameScreen.updateActivity(roundIsOver);
+    }
+
+    /**
+     * Clears gameTable of all loose cards.
+     */
+    public void clearGameTable() {
+        this.gameTable.clearTableCards();
     }
 
     /**
@@ -133,7 +158,7 @@ public class Round {
                 possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
                 if (possibleMoveSelected) {
                     changeTurn();
-                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                    return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Trail move cannot be made.";
                 }
@@ -141,29 +166,29 @@ public class Round {
                 possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer);
                 if (possibleMoveSelected) {
                     changeTurn();
-                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                    return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Build move cannot be made with cards selected.";
                 }
             } else if (moveObj.getMoveType().equals("capture")) {
                 possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
                 if (possibleMoveSelected) {
+                    setCapturedLast(gamePlayer);
                     changeTurn();
-                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                    return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Capture move cannot be made with cards selected.";
                 }
             } else if (moveObj.getMoveType().equals("increase")) {
                 // increase
-                possibleMoveSelected = increase(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                possibleMoveSelected = increase(moveObj.getCardPlayedFromHand(), moveObj.getCardSelectedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
                 if (possibleMoveSelected) {
                     changeTurn();
-                    return "" + gamePlayer.getPlayerString() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
+                    return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Cannot increase build with cards selected.";
                 }
             }
-
         }
 
         changeTurn();
@@ -183,9 +208,12 @@ public class Round {
         }
 
         if (gamePlayers.get(0).handIsEmpty() && gamePlayers.get(1).handIsEmpty()) {
+            if (this.gameDeck.isEmpty()) {
+                this.roundIsOver = true;
+            }
             dealHands();
         } else {
-            GameScreen.updateActivity(this.gamePlayers, this.gameTable, this.roundNum, true);
+            GameScreen.updateActivity(roundIsOver);
         }
     }
 
@@ -243,7 +271,7 @@ public class Round {
             // creating new single build
             ArrayList<ArrayList<Card>> totalBuildCards = new ArrayList<>();
             totalBuildCards.add(buildCards);
-            Build b1 = new Build(totalBuildCards, selectedVal, lockedCard, gamePlayer.getPlayerString());
+            Build b1 = new Build(totalBuildCards, selectedVal, lockedCard, gamePlayer.getPlayerIdentity());
             this.gameTable.addBuild(b1);
             for (int i = 0; i < buildCards.size(); i++) {
                 buildCards.get(i).setPartOfBuild(true);
@@ -269,12 +297,20 @@ public class Round {
         }
     }
 
+    /**
+     * Find whether capture move can be made or not.
+     * @param cardPlayed, Card played to capture cards.
+     * @param selectedCards, ArrayList Cards on the table selected to capture.
+     * @param selectedBuilds, ArrayList of Builds selected for capture.
+     * @param gamePlayer, Player making the move.
+     * @return boolean value determining whether or not the capture move was made.
+     */
     private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, ArrayList<Build> selectedBuilds, Player gamePlayer) {
        ArrayList<Build> capturableBuilds = new ArrayList<>();
 
        for (int i = 0; i < selectedBuilds.size(); i++) {
            if (selectedBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
-                   || (!selectedBuilds.get(i).getBuildOwner().equals(gamePlayer.getPlayerString()) && selectedBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
+                   || (!selectedBuilds.get(i).getBuildOwner().equals(gamePlayer.getPlayerIdentity()) && selectedBuilds.get(i).getSumCard().getValue() == cardPlayed.getValue())) {
                capturableBuilds.add(selectedBuilds.get(i));
            }
        }
@@ -469,6 +505,14 @@ public class Round {
         return null;
     }
 
+    /**
+     * Check to see if increase move can be made; if possible update model and return true, else return false.
+     * @param lockedCard, Card to lock increased build to.
+     * @param playedCard, Card played into build increased.
+     * @param buildsSelected, ArrayList of Build objects selected, in this case should only be one.
+     * @param gamePlayer, Player making move
+     * @return boolean value representing whether or not move was made.
+     */
     private boolean increase(Card lockedCard, Card playedCard, ArrayList<Build> buildsSelected, Player gamePlayer) {
         if (buildsSelected.isEmpty()) {
             return false;
@@ -483,9 +527,9 @@ public class Round {
         }
 
         if ((lockedCard.getValue() == playedCard.getValue() + buildsSelected.get(0).getSumVal())
-                && !gamePlayer.getPlayerString().equals(buildsSelected.get(0).getBuildOwner())) {
+                && !gamePlayer.getPlayerIdentity().equals(buildsSelected.get(0).getBuildOwner())) {
             // increase is possible.
-            buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerString());
+            buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerIdentity());
             buildsSelected.get(0).getSumCard().setLockedToBuild(false);
             buildsSelected.get(0).setSumCard(lockedCard);
             lockedCard.setLockedToBuild(true);
@@ -495,5 +539,19 @@ public class Round {
 
         return false;
 
+    }
+
+    /**
+     * Sets capturedLast variable after capture move is made.
+     * @param justPlayed, Player that just made a capture move.
+     */
+    private void setCapturedLast(Player justPlayed) {
+        if (gamePlayers.get(0) == justPlayed) {
+            gamePlayers.get(0).setCapturedLast(true);
+            gamePlayers.get(1).setCapturedLast(false);
+        } else {
+            gamePlayers.get(1).setCapturedLast(true);
+            gamePlayers.get(0).setCapturedLast(false);
+        }
     }
 }

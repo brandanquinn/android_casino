@@ -185,7 +185,7 @@ public class Table {
         for (int i = 0; i < tableBuilds.size(); i++) {
             for (int j = 0; j < tableBuilds.get(i).size(); j++) {
                 for (int k = 0; k < buildBuddies.size(); k++)
-                    if (tableBuilds.get(i).get(j).getCardString() == buildBuddies.get(i).getCardString()) return true;
+                    if (tableBuilds.get(i).get(j).getCardString().equals(buildBuddies.get(k).getCardString())) return true;
             }
         }
 

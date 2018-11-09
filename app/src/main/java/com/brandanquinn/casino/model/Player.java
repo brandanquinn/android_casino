@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class Player {
     private int score;
     private boolean isPlaying;
-    private String playerString;
     private boolean capturedLast;
     private Move recommendedMove;
 
@@ -48,6 +47,14 @@ public class Player {
      */
     public void setScore(int score) {
         this.score = score;
+    }
+
+    /**
+     * Getter for playerIdentity private member variable
+     * @return String representation of player identity.
+     */
+    public String getPlayerIdentity() {
+        return "Player";
     }
 
     /**
@@ -269,22 +276,6 @@ public class Player {
     }
 
     /**
-     * Setter for playerString private member variable
-     * @param playerString, String representing if player is Human / Computer.
-     */
-    public void setPlayerString(String playerString) {
-        this.playerString = playerString;
-    }
-
-    /**
-     * Getter for playerString private member variable
-     * @return String representing if player is Human / Computer.
-     */
-    public String getPlayerString() {
-        return this.playerString;
-    }
-
-    /**
      * Getter for gameTable private member variable
      * @return Table object for all cards / builds on the table.
      */
@@ -360,7 +351,7 @@ public class Player {
         ArrayList<Build> currentBuilds = this.gameTable.getCurrentBuilds();
 
         for (int i = 0; i < currentBuilds.size(); i++) {
-            if (currentBuilds.get(i).getBuildOwner() != getPlayerString()) {
+            if (!currentBuilds.get(i).getBuildOwner().equals(getPlayerIdentity())) {
                 for (int j = 0; j < this.hand.size(); j++) {
                     if (currentBuilds.get(i).getSumVal() + cardSelected.getValue() == this.hand.get(j).getValue()
                             && !currentBuilds.get(i).getIsMultiBuild()) {
@@ -479,7 +470,7 @@ public class Player {
 
         for (int i = 0; i < currentBuilds.size(); i++) {
             if (currentBuilds.get(i).getSumCard().getCardString().equals(cardPlayed.getCardString())
-                    || (!currentBuilds.get(i).getBuildOwner().equals(getPlayerString()) && currentBuilds.get(i).getSumVal() == cardPlayed.getValue())) {
+                    || (!currentBuilds.get(i).getBuildOwner().equals(getPlayerIdentity()) && currentBuilds.get(i).getSumVal() == cardPlayed.getValue())) {
                 capturableBuilds.add(currentBuilds.get(i));
             }
         }
@@ -518,7 +509,7 @@ public class Player {
         for (int i = 0; i < capturableBuilds.size(); i++) {
             ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
             for (int j = 0; j < tempBuildCards.size(); j++) {
-                pileAdditions.addAll(tempBuildCards.get(i));
+                pileAdditions.addAll(tempBuildCards.get(j));
             }
         }
 

@@ -10,7 +10,6 @@ public class Computer extends Player{
      */
     public Computer() {
         setScore(0);
-        setPlayerString("Computer");
     }
 
     /**
@@ -19,13 +18,22 @@ public class Computer extends Player{
      */
     public Computer(int score) {
         setScore(score);
-        setPlayerString("Computer");
+    }
+
+    /**
+     * Polymorphic function to get a player's identity.
+     * @return String representing player's identity.
+     */
+    @Override
+    public String getPlayerIdentity() {
+        return "Computer";
     }
 
     /**
      * Computer play function that will call the AI from the Parent class Player.
      * @return Pair selected by the AI for move to be made.
      */
+    @Override
     public Move play() {
         return getHelp();
     }
