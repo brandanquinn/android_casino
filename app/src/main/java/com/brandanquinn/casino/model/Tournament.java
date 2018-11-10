@@ -2,7 +2,6 @@ package com.brandanquinn.casino.model;
 
 import com.brandanquinn.casino.casino.StartScreen;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Tournament {
@@ -12,6 +11,8 @@ public class Tournament {
     private int coinToss;
     private ArrayList<Player> gamePlayers;
     private String winningPlayer;
+    private String humanFinalPile, computerFinalPile;
+    private int humanPileSize, computerPileSize, humanSpades, computerSpades;
 
     /**
      * Default constructor for the Tournament class
@@ -101,9 +102,13 @@ public class Tournament {
     private void computePlayerScores() {
         int p1CurrentScore = this.gamePlayers.get(0).getScore();
         ArrayList<Card> p1CurrentPile = this.gamePlayers.get(0).getPile();
+        this.humanFinalPile = this.gamePlayers.get(0).getPileString();
+        this.humanPileSize = p1CurrentPile.size();
 
         int p2CurrentScore = this.gamePlayers.get(1).getScore();
         ArrayList<Card> p2CurrentPile = this.gamePlayers.get(1).getPile();
+        this.computerFinalPile = this.gamePlayers.get(1).getPileString();
+        this.computerPileSize = p2CurrentPile.size();
 
         if (p1CurrentPile.size() > p2CurrentPile.size()) {
             p1CurrentScore += 3;
@@ -126,6 +131,7 @@ public class Tournament {
                 p1CurrentScore++;
             }
         }
+        this.humanSpades = p1SpadesCount;
 
         for (int i = 0; i < p2CurrentPile.size(); i++) {
             if (p2CurrentPile.get(i).getSuit() == 'S') {
@@ -141,6 +147,7 @@ public class Tournament {
                 p2CurrentScore++;
             }
         }
+        this.computerSpades = p2SpadesCount;
 
         if (p1SpadesCount > p2SpadesCount) {
             p1CurrentScore++;
@@ -150,5 +157,23 @@ public class Tournament {
 
         this.gamePlayers.get(0).setScore(p1CurrentScore);
         this.gamePlayers.get(1).setScore(p2CurrentScore);
+    }
+
+    /**
+     * Generates a string consisting of all the end of round information for the players.
+     * @return String with all end of round info
+     */
+    public String generateEndOfRoundReport() {
+        String report = "";
+        report += "Human final pile: " + humanFinalPile + '\n';
+        report += "Computer final pile: " + computerFinalPile + '\n';
+        report += "Human pile size: " + humanPileSize + '\n';
+        report += "Computer pile size: " + computerPileSize + '\n';
+        report += "Human spades count: " + humanSpades + '\n';
+        report += "Computer spades count: " + computerSpades + '\n';
+        report += "Human current score: " + gamePlayers.get(0).getScore() + '\n';
+        report += "Computer current score: " + gamePlayers.get(1).getScore() + '\n';
+
+        return report;
     }
 }

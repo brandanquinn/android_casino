@@ -86,6 +86,7 @@ public class Round {
         playerTwo.setGameTable(this.gameTable);
 
         playerOne.setIsPlaying(true);
+        playerTwo.setIsPlaying(false);
 
         GameScreen.updateActivity(roundIsOver);
     }
@@ -306,6 +307,13 @@ public class Round {
      * @return boolean value determining whether or not the capture move was made.
      */
     private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, ArrayList<Build> selectedBuilds, Player gamePlayer) {
+        ArrayList<Card> tableCards = new ArrayList<>(this.gameTable.getTableCards());
+        for (int i = 0; i < tableCards.size(); i++) {
+            if ((tableCards.get(i).getValue() == cardPlayed.getValue()) && !selectedCards.contains(tableCards.get(i))) {
+                return false;
+            }
+        }
+
        ArrayList<Build> capturableBuilds = new ArrayList<>();
 
        for (int i = 0; i < selectedBuilds.size(); i++) {

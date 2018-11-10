@@ -1,7 +1,9 @@
 package com.brandanquinn.casino.casino;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.widget.Toast;
 
 import com.brandanquinn.casino.model.Player;
 import com.brandanquinn.casino.model.Round;
-import com.brandanquinn.casino.model.Table;
 import com.brandanquinn.casino.model.Tournament;
 import com.brandanquinn.casino.view.Display;
 
@@ -27,6 +28,12 @@ public class GameScreen extends AppCompatActivity {
     private static String cardSelectedFromHand;
     private static String cardPlayedIntoBuild;
     private static ArrayList<String> cardsSelectedFromTable;
+    private static boolean moveBeingMade;
+
+    private static Button makeMove;
+    private static Button clearSelection;
+    private static TextView moveDisplay;
+    private static TextView cardsSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,29 +42,35 @@ public class GameScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_screen);
         gameDisplay = new Display(this);
-        this.tourney = new Tournament();
+        tourney = new Tournament();
         moveType = "";
         cardSelectedFromHand = "";
         cardPlayedIntoBuild = "";
         cardsSelectedFromTable = new ArrayList<>();
+        moveBeingMade = false;
+
+        makeMove = findViewById(R.id.makeMove);
+        clearSelection = findViewById(R.id.clearSelection);
+        moveDisplay = findViewById(R.id.moveDisplay);
+        cardsSelection = findViewById(R.id.cardsSelected);
+
         tourney.startRound(true);
-        Round currentRound = tourney.getCurrentRound();
 
         setupMoveButtons();
         setupCardButtons();
-        setupGameplay(currentRound);
+        setupGameplay(tourney.getCurrentRound());
     }
 
     /**
      * Static function used for the model to alert the Controller to update the View.
-     * @param gamePlayers, ArrayList of current game players
-     * @param gameTable, Table object to track cards/builds on the table
-     * @param roundNum, int representing current round number
+     * @param roundIsOver, boolean representing whether or not the current round is over.
      */
     public static void updateActivity(boolean roundIsOver) {
         if (roundIsOver) {
             // send tournament information and start new round
             tourney.endRound();
+            setupGameplay(tourney.getCurrentRound());
+            displayEndOfRound();
             if (!tourney.getWinningPlayer().isEmpty()) {
                 // Tournament is over -> move to next Activity.
             }
@@ -170,59 +183,65 @@ public class GameScreen extends AppCompatActivity {
      * Initializes the button selected to make a move; move selection is handled based on type of player
      * @param currentRound, Round object to access game play features.
      */
-    private void setupGameplay(final Round currentRound) {
+    private static void setupGameplay(final Round currentRound) {
         final ArrayList<Player> gamePlayers = currentRound.getGamePlayers();
-        Button makeMove = findViewById(R.id.makeMove);
+
         makeMove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (gamePlayers.get(0).getIsPlaying()) {
-                    if (gamePlayers.get(0).getPlayerIdentity().equals("Computer")) {
+                    if (gamePlayers.get(0).getPlayerIdentity().equals("Computer") && !moveBeingMade) {
                         // If current player is a computer
-                        Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                        moveBeingMade = true;
+                        Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                         toast.show();
                     } else {
                         // If current player is a human
-                        if (moveType.equals("trail") && !cardSelectedFromHand.isEmpty()) {
+                        if (moveType.equals("trail") && !cardSelectedFromHand.isEmpty() && !moveBeingMade) {
                             // Make trail move.
+                            moveBeingMade = true;
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType.equals("build") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("build") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty() && !moveBeingMade) {
                             // Setup move pair for Human
+                            moveBeingMade = true;
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setCardPlayedIntoBuild(cardPlayedIntoBuild);
                             gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(0).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType.equals("capture") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("capture") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty() && !moveBeingMade) {
                             // Setup move pair for Human
+                            moveBeingMade = true;
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(0).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType.equals("increase") && !cardSelectedFromHand.isEmpty() &&!cardPlayedIntoBuild.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
+                        } else if (moveType.equals("increase") && !cardSelectedFromHand.isEmpty() &&!cardPlayedIntoBuild.isEmpty() && !cardsSelectedFromTable.isEmpty() && !moveBeingMade) {
                             // Setup move pair for Human
+                            moveBeingMade = true;
                             gamePlayers.get(0).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(0).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(0).setCardPlayedIntoBuild(cardPlayedIntoBuild);
                             gamePlayers.get(0).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (moveType.equals("help")) {
+                        } else if (moveType.equals("help") && !moveBeingMade) {
                             // Human getting help from AI
+                            moveBeingMade = true;
                             gamePlayers.get(0).setMoveSelected("help");
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(0)), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }
                 } else {
                     if (gamePlayers.get(1).getPlayerIdentity().equals("Computer")) {
                         // If current player is a computer
-                        Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                         toast.show();
                     } else {
                         // If current player is a human
@@ -230,7 +249,7 @@ public class GameScreen extends AppCompatActivity {
                             // Make trail move.
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
                         } else if (moveType.equals("build") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
@@ -238,14 +257,14 @@ public class GameScreen extends AppCompatActivity {
                             gamePlayers.get(1).setCardPlayedIntoBuild(cardPlayedIntoBuild);
                             gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(1).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
                         } else if (moveType.equals("capture") && !cardSelectedFromHand.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
                             gamePlayers.get(1).setCardSelectedFromHand(cardSelectedFromHand);
                             gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(1).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
                         } else if (moveType.equals("increase") && !cardSelectedFromHand.isEmpty() && !cardPlayedIntoBuild.isEmpty() && !cardsSelectedFromTable.isEmpty()) {
                             // Setup move pair for Human
@@ -253,12 +272,12 @@ public class GameScreen extends AppCompatActivity {
                             gamePlayers.get(1).setCardsSelectedFromTable(cardsSelectedFromTable);
                             gamePlayers.get(1).setCardPlayedIntoBuild(cardPlayedIntoBuild);
                             gamePlayers.get(1).setMoveSelected(moveType);
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
                         } else if (moveType.equals("help")) {
                             // Human getting help from AI
                             gamePlayers.get(1).setMoveSelected("help");
-                            Toast toast = Toast.makeText(getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getApplicationContext(), currentRound.playTurn(gamePlayers.get(1)), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }
@@ -267,7 +286,7 @@ public class GameScreen extends AppCompatActivity {
             }
         });
 
-        final Button clearSelection = findViewById(R.id.clearSelection);
+
         clearSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -338,15 +357,14 @@ public class GameScreen extends AppCompatActivity {
     /**
      * Clears out variables set during player's turn.
      */
-    private void clearSelection() {
+    private static void clearSelection() {
         moveType = "";
         cardSelectedFromHand = "";
         cardPlayedIntoBuild = "";
         cardsSelectedFromTable.clear();
-        TextView moveDisplay = findViewById(R.id.moveDisplay);
+        moveBeingMade = false;
         moveDisplay.setText("");
 
-        TextView cardsSelection = findViewById(R.id.cardsSelected);
         cardsSelection.setText("");
     }
 
@@ -370,5 +388,20 @@ public class GameScreen extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private static void displayEndOfRound() {
+        // Display dialog box with all end of Round information.
+        AlertDialog.Builder endOfRoundBuilder = new AlertDialog.Builder(context)
+                .setTitle("End of Round Info")
+                .setMessage(tourney.generateEndOfRoundReport())
+                .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog endOfRound = endOfRoundBuilder.show();
     }
 }
