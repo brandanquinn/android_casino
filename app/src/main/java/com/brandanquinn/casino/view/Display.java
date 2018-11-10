@@ -23,13 +23,14 @@ import com.brandanquinn.casino.model.Table;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
 public class Display {
-    private ArrayList<ImageView> computerButtons;
+    private ArrayList<Button> fileButtons;
     private ArrayList<ImageButton> humanButtons;
     private ArrayList<ImageButton> tableButtons;
     private ArrayList<Button> buildButtons;
@@ -42,9 +43,18 @@ public class Display {
         this.humanButtons = new ArrayList<>();
         this.tableButtons = new ArrayList<>();
         this.buildButtons = new ArrayList<>();
+        this.fileButtons = new ArrayList<>();
         this.appContext = context;
         this.gameActivity = (Activity)this.appContext;
 
+    }
+
+    /**
+     * Getter for fileButtons private member variable
+     * @return ArrayList of fileButtons generated for save file selection.
+     */
+    public ArrayList<Button> getFileButtons() {
+        return fileButtons;
     }
 
     /**
@@ -91,6 +101,31 @@ public class Display {
         displayCards(gamePlayers, gameTable);
         displayRoundNum(roundNum);
         displayScores(gamePlayers, whoIsPlaying);
+    }
+
+    public LinearLayout getFileSelection(ArrayList<File> fileList) {
+
+        LinearLayout fileGrid = new LinearLayout(appContext);
+        fileGrid.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(15, 5, 5, 5);
+        fileGrid.setLayoutParams(params);
+
+
+        for (int i = 0; i < fileList.size(); i++) {
+            Button fileButton = new Button(appContext);
+            fileButton.setText(fileList.get(i).getName());
+            fileButton.setTag(fileList.get(i).getName());
+            fileButton.setHeight(50);
+            fileButton.setWidth(200);
+            fileButton.setVisibility(View.VISIBLE);
+            fileButton.setLayoutParams(new LinearLayout.LayoutParams(200, 50));
+            this.fileButtons.add(fileButton);
+            fileGrid.addView(fileButton);
+        }
+
+        return fileGrid;
     }
 
     /**

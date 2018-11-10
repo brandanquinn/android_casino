@@ -1,7 +1,16 @@
 package com.brandanquinn.casino.model;
 
+import android.content.Context;
+import android.os.Environment;
+
+import com.brandanquinn.casino.casino.R;
 import com.brandanquinn.casino.casino.StartScreen;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Tournament {
@@ -73,6 +82,65 @@ public class Tournament {
         }
     }
 
+    public void loadSavedGame(String fileName) throws IOException {
+        File fileDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "serialization");
+        File file = new File(fileDir, "serialization.txt");
+
+        String line = "";
+        int lineNum = 0;
+
+        int currentRoundNum;
+        int computerScore, humanScore;
+        ArrayList<Card> humanHand = new ArrayList<>();
+        ArrayList<Card> humanPile = new ArrayList<>();
+        ArrayList<Card> computerHand = new ArrayList<>();
+        ArrayList<Card> computerPile = new ArrayList<>();
+        ArrayList<Card> deckList = new ArrayList<>();
+        ArrayList<Card> tableCards = new ArrayList<>();
+        ArrayList<String> buildStrings = new ArrayList<>();
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            while ((line = reader.readLine()) != null) {
+                switch(lineNum) {
+                    case 0:
+                        currentRoundNum = Integer.parseInt(line.substring(line.indexOf(':') + 2));
+                        break;
+                    case 3:
+                        computerScore = Integer.parseInt(line.substring(line.indexOf(':') + 2));
+                        break;
+                    case 4:
+                        computerHand = parseCardsFromFile(line);
+                        break;
+                    case 5:
+                        computerPile = parseCardsFromFile(line);
+                        break;
+                    case 8:
+                        humanScore = Integer.parseInt(line.substring(line.indexOf(':') + 2));
+                        break;
+                    case 9:
+                        humanHand = parseCardsFromFile(line);
+                        break;
+                    case 10:
+                        humanPile = parseCardsFromFile(line);
+                        break;
+                    case 12:
+                        buildStrings = parseBuilds(line.substring(line.indexOf(':') + 1));
+                        tableCards = getTableCards(line.substring(line.indexOf(':') + 1));
+                        break;
+                }
+                lineNum++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Ends the current round and performs score calculations.
+     * If tournament is over, report winner. Else start new round.
+     */
     public void endRound() {
         this.roundsPlayed = this.currentRound.getRoundNum() + 1;
 
@@ -94,6 +162,66 @@ public class Tournament {
             this.currentRound.clearGameTable();
             startRound(false);
         }
+    }
+
+    /**
+     * Takes in a String and parses each card in the string into an ArrayList of Card objects
+     * @param line, String of cards from save file.
+     * @return ArrayList of Card objects
+     */
+    private ArrayList<Card> parseCardsFromFile(String line) {
+        String parsedStr = line.substring(line.indexOf(':') + 1);
+
+        String[] cardStrings = parsedStr.split("\\s+");
+        ArrayList<Card> parsedCards = new ArrayList<>();
+
+        for (int i = 0; i < cardStrings.length; i++) {
+            if (!cardStrings[i].isEmpty()) {
+                parsedCards.add(new Card(cardStrings[i].charAt(0), cardStrings[i].charAt(1)));
+            }
+        }
+
+        return parsedCards;
+    }
+
+    /**
+     * Parses build strings from table
+     * @param line, String read from save file
+     * @return ArrayList of Build strings
+     */
+    private ArrayList<String> parseBuilds(String line) {
+        int openBracketCounter = 0, closedBracketCounter = 0;
+        boolean inBuild = false;
+
+        ArrayList<String> totalBuildStrings = new ArrayList<>();
+        String buildString = "";
+
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == '[') {
+                openBracketCounter++;
+                inBuild = true;
+            } else if (line.charAt(i) == ']' && closedBracketCounter != openBracketCounter) {
+                closedBracketCounter++;
+            }
+            if (inBuild) {
+                buildString += line.charAt(i);
+            }
+            if (closedBracketCounter == openBracketCounter && closedBracketCounter != 0) {
+                inBuild = false;
+                totalBuildStrings.add(buildString);
+                buildString = "";
+                openBracketCounter = 0;
+                closedBracketCounter = 0;
+            }
+        }
+
+        return totalBuildStrings;
+    }
+
+    ArrayList<Card> getTableCards(String line) {
+        ArrayList<Card> tableCardList = new ArrayList<>();
+
+        return tableCardList;
     }
 
     /**

@@ -19,16 +19,26 @@ public class StartScreen extends AppCompatActivity {
             newGameClicked();
         }
     };
+    private View.OnClickListener loadGameOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            loadGameClicked();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
-        this.coinTossVal = ' ';
+        coinTossVal = ' ';
 
         final Button newGame = findViewById(R.id.newgame);
         newGame.setOnClickListener(newGameOnClickListener);
         newGame.setClickable(false);
+
+        final Button loadGame = findViewById(R.id.loadgame);
+        loadGame.setOnClickListener(loadGameOnClickListener);
+        loadGame.setClickable(false);
 
         final Button heads = findViewById(R.id.headsButton);
         final Button tails = findViewById(R.id.tailsButton);
@@ -43,6 +53,7 @@ public class StartScreen extends AppCompatActivity {
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
                 newGame.setVisibility(View.VISIBLE);
+                loadGame.setClickable(true);
             }
         });
 
@@ -56,6 +67,7 @@ public class StartScreen extends AppCompatActivity {
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
                 newGame.setVisibility(View.VISIBLE);
+                loadGame.setClickable(true);
             }
         });
     }
@@ -65,7 +77,25 @@ public class StartScreen extends AppCompatActivity {
      */
     public void newGameClicked() {
         Intent i = new Intent(getApplicationContext(), GameScreen.class);
+
+        Bundle myBundle = new Bundle();
+        myBundle.putBoolean("load", false);
+
+        i.putExtras(myBundle);
         startActivity(i);
+    }
+
+    /**
+     * Attempts to load a saved game when proper button is clicked.
+     */
+    public void loadGameClicked() {
+        Intent loadGame = new Intent(getApplicationContext(), GameScreen.class);
+
+        Bundle myBundle = new Bundle();
+        myBundle.putBoolean("load", true);
+
+        loadGame.putExtras(myBundle);
+        startActivity(loadGame);
     }
 
     /**
