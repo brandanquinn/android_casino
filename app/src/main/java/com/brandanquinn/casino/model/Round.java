@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Round {
@@ -16,6 +17,7 @@ public class Round {
     private Table gameTable;
     private ArrayList<Player> gamePlayers;
     private boolean roundIsOver;
+    private String previousMove;
 
     /**
      * Overloaded constructor for Round class.
@@ -28,6 +30,7 @@ public class Round {
         this.gameTable = new Table();
         this.gamePlayers = gamePlayers;
         this.roundIsOver = false;
+        this.previousMove = "";
     }
 
     /**
@@ -44,6 +47,7 @@ public class Round {
         this.gameTable = new Table(tableCards, currentBuilds);
         this.gamePlayers = gamePlayers;
         this.roundIsOver = false;
+        this.previousMove = "";
     }
 
 
@@ -69,6 +73,14 @@ public class Round {
      */
     public Table getGameTable() {
         return this.gameTable;
+    }
+
+    /**
+     * Getter for previosuMove private member variable
+     * @return String representing the previous move made by player.
+     */
+    public String getPreviousMove() {
+        return previousMove;
     }
 
     /**
@@ -230,6 +242,7 @@ public class Round {
      */
     public String playTurn(Player gamePlayer) {
         boolean possibleMoveSelected = false;
+        this.previousMove = "";
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
             Move moveObj = gamePlayer.play();
             if (moveObj.getMoveType().equals("trail")) {
@@ -277,6 +290,7 @@ public class Round {
      * Used to change from one player's turn to the other.
      */
     private void changeTurn() {
+
         if (gamePlayers.get(0).getIsPlaying()) {
             gamePlayers.get(0).setIsPlaying(false);
             gamePlayers.get(1).setIsPlaying(true);
@@ -284,6 +298,7 @@ public class Round {
             gamePlayers.get(1).setIsPlaying(false);
             gamePlayers.get(0).setIsPlaying(true);
         }
+
 
         if (gamePlayers.get(0).handIsEmpty() && gamePlayers.get(1).handIsEmpty()) {
             if (this.gameDeck.isEmpty()) {
@@ -307,6 +322,9 @@ public class Round {
         }
         gamePlayer.discard(cardPlayed);
         this.gameTable.addToTableCards(cardPlayed);
+
+        this.previousMove += gamePlayer.getPlayerIdentity() + " has trailed card: " + cardPlayed.getCardString();
+
         return true;
     }
 
@@ -359,10 +377,13 @@ public class Round {
             this.gameTable.addToTableCards(playedCard);
             lockedCard.setLockedToBuild(true);
 
+            this.previousMove += gamePlayer.getPlayerIdentity() + " has created a new build by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
+
             return true;
         } else {
             // extending current build to a multi build
             Build b1 = getCorrectBuild(lockedCard);
+            String oldBuildStr = b1.getBuildString();
             b1.extendBuild(buildCards);
             for (int i = 0; i < buildCards.size(); i++) {
                 buildCards.get(i).setPartOfBuild(true);
@@ -371,8 +392,25 @@ public class Round {
             gamePlayer.discard(playedCard);
             this.gameTable.addToTableCards(playedCard);
 
+            this.previousMove += gamePlayer.getPlayerIdentity() + " has extended: " + oldBuildStr  + " by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
+
             return true;
         }
+    }
+
+    /**
+     * Generates a string representation of a list of cards
+     * @param list, ArrayList of Card objects.
+     * @return String representation of list.
+     */
+    private String cardListToString(ArrayList<Card> list) {
+        String listStr = "";
+
+        for (int i = 0; i < list.size(); i++) {
+            listStr += list.get(i).getCardString() + " ";
+        }
+
+        return listStr;
     }
 
     /**
@@ -451,6 +489,9 @@ public class Round {
            }
        }
        gamePlayer.addToPile(pileAdditions);
+
+       this.previousMove += gamePlayer.getPlayerIdentity() + " has captured " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + "by playing card: " + cardPlayed.getCardString();
+
        return true;
 
     }
@@ -614,10 +655,13 @@ public class Round {
         if ((lockedCard.getValue() == playedCard.getValue() + buildsSelected.get(0).getSumVal())
                 && !gamePlayer.getPlayerIdentity().equals(buildsSelected.get(0).getBuildOwner())) {
             // increase is possible.
+            String oldBuildStr = buildsSelected.get(0).getBuildString();
             buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerIdentity());
             buildsSelected.get(0).getSumCard().setLockedToBuild(false);
             buildsSelected.get(0).setSumCard(lockedCard);
             lockedCard.setLockedToBuild(true);
+
+            this.previousMove += gamePlayer.getPlayerIdentity() + " has increased and claimed build: " + oldBuildStr + " by playing: " + playedCard.getCardString();
 
             return true;
         }

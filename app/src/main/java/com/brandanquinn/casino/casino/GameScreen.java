@@ -94,7 +94,7 @@ public class GameScreen extends AppCompatActivity {
             setupGameplay(tourney.getCurrentRound());
         }
 
-        gameDisplay.updateView(tourney.getCurrentRound().getGamePlayers(), tourney.getCurrentRound().getGameTable(), tourney.getCurrentRound().getRoundNum(), tourney.getCurrentRound().whoIsPlaying());
+        gameDisplay.updateView(tourney.getCurrentRound().getGamePlayers(), tourney.getCurrentRound().getGameTable(), tourney.getCurrentRound().getRoundNum(), tourney.getCurrentRound().whoIsPlaying(), tourney.getCurrentRound().getPreviousMove());
         setupCardButtons();
         setupPiles(tourney.getCurrentRound().getGamePlayers());
 

@@ -96,11 +96,12 @@ public class Display {
      * @param gameTable, Table object used to access cards/builds on the table
      * @param roundNum, int used to keep track of current round number
      */
-    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying) {
+    public void updateView(ArrayList<Player> gamePlayers, Table gameTable, int roundNum, String whoIsPlaying, String previousMove) {
 
         displayCards(gamePlayers, gameTable);
         displayRoundNum(roundNum);
         displayScores(gamePlayers, whoIsPlaying);
+        displayPrevMove(previousMove);
     }
 
     /**
@@ -153,17 +154,6 @@ public class Display {
         LinearLayout humanGrid = this.gameActivity.findViewById(R.id.humanHand);
         LinearLayout computerGrid = this.gameActivity.findViewById(R.id.computerHand);
         LinearLayout tableGrid = this.gameActivity.findViewById(R.id.tableGrid);
-
-        ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-        ActivityManager activityManager = (ActivityManager)gameActivity.getSystemService(ACTIVITY_SERVICE);
-        activityManager.getMemoryInfo(mi);
-        double availableMegs = mi.availMem / 0x100000L;
-
-//Percentage can be calculated for API 16+
-        double percentAvail = mi.availMem / (double)mi.totalMem * 100.0;
-
-        TextView debug = gameActivity.findViewById(R.id.debugBox2);
-        debug.setText(Double.toString(availableMegs) + '\n' + Double.toString(percentAvail) + "%");
 
         // Empty grid components and button containers
         humanGrid.removeAllViews();
@@ -314,7 +304,7 @@ public class Display {
      * Update view component for Round Number
      * @param roundNum, int value to track current round number.
      */
-    public void displayRoundNum(int roundNum) {
+    private void displayRoundNum(int roundNum) {
         TextView roundNumDisplay = this.gameActivity.findViewById(R.id.roundNumber);
 
         roundNumDisplay.setText(Integer.toString(roundNum));
@@ -325,7 +315,7 @@ public class Display {
      * @param gamePlayers, ArrayList of game players to access scores.
      * @param whoIsPlaying, String denoting who is currently playing.
      */
-    public void displayScores(ArrayList<Player> gamePlayers, String whoIsPlaying) {
+    private void displayScores(ArrayList<Player> gamePlayers, String whoIsPlaying) {
         // Set human score
         TextView humanScoreDisplay = this.gameActivity.findViewById(R.id.humanScore);
         humanScoreDisplay.setText(Integer.toString(gamePlayers.get(0).getScore()));
@@ -337,6 +327,16 @@ public class Display {
         // Who is playing
         TextView debug = this.gameActivity.findViewById(R.id.debugBox);
         debug.setText(whoIsPlaying);
+    }
+
+    /**
+     * Updates previous move log TextView
+     * @param previousMove, String description of previous move made.
+     */
+    private void displayPrevMove(String previousMove) {
+        TextView moveLog = this.gameActivity.findViewById(R.id.moveLog);
+
+        moveLog.setText(previousMove);
     }
 
     /**
