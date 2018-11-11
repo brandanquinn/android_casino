@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +23,6 @@ import com.brandanquinn.casino.model.Tournament;
 import com.brandanquinn.casino.view.Display;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -40,6 +39,7 @@ public class GameScreen extends AppCompatActivity {
     private static boolean moveBeingMade;
     private static String saveFileSelected;
     private static boolean loadAttemped;
+    private static String saveFileName;
 
     private static Button makeMove;
     private static Button clearSelection;
@@ -63,6 +63,7 @@ public class GameScreen extends AppCompatActivity {
         moveBeingMade = false;
         saveFileSelected = "";
         loadAttemped = false;
+        saveFileName = "";
 
         makeMove = findViewById(R.id.makeMove);
         clearSelection = findViewById(R.id.clearSelection);
@@ -90,18 +91,6 @@ public class GameScreen extends AppCompatActivity {
             // send tournament information and start new round
             tourney.endRound();
             displayEndOfRound();
-            if (!tourney.getWinningPlayer().isEmpty()) {
-                // Tournament is over -> move to next Activity.
-                Intent endGame = new Intent(context.getApplicationContext(), EndScreen.class);
-
-                Bundle scores = new Bundle();
-                scores.putInt("humanScore", tourney.getCurrentRound().getGamePlayers().get(0).getScore());
-                scores.putInt("computerScore", tourney.getCurrentRound().getGamePlayers().get(1).getScore());
-                scores.putString("winner", tourney.getWinningPlayer());
-
-                endGame.putExtras(scores);
-                context.startActivity(endGame);
-            }
             setupGameplay(tourney.getCurrentRound());
         }
 
@@ -158,32 +147,6 @@ public class GameScreen extends AppCompatActivity {
         if (!file.exists()) {
             file.mkdir();
         }
-
-        // Temporarily write save file to device for testing purposes.
-        try {
-            File saveFile = new File(file, "serialization.txt");
-            FileWriter writer = new FileWriter(saveFile);
-            writer.append("Round: 3\n\n");
-            writer.append("Computer:\n" +
-                    "   Score: 17\n" +
-                    "   Hand: H5 H6 D4 D7\n" +
-                    "   Pile: SX SQ SK D6 H8\n\n");
-            writer.append("Human:\n" +
-                    "   Score: 14\n" +
-                    "   Hand: SA S4 CA C9\n" +
-                    "   Pile: DJ DA C3 C5\n\n");
-            writer.append("Table:  [ [C6 S3] [S9] ] C8 CJ HA\n\n");
-            writer.append("Build Owner: [ [C6 S3] [S9] ] Human\n\n");
-            writer.append("Last Capturer: Human\n\n");
-            writer.append("Deck: S7 D3 D5 H2 H3 S5 D8 C2 H9 CX CQ CK HJ S2 S6 D9 DX DQ DK D2 HX HQ HK C4 C7 S8 SJ H4 H7\n\n");
-            writer.append("Next Player: Human");
-            writer.flush();
-            writer.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
 
         ArrayList<File> saveFiles = getListFiles(file);
 
@@ -315,6 +278,33 @@ public class GameScreen extends AppCompatActivity {
                 cardPlayedIntoBuild = "";
                 moveType = "help";
                 moveDisplay.setText("Selected to get help from AI.");
+            }
+        });
+        Button save = findViewById(R.id.saveButton);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText saveInput = new EditText(context);
+
+                AlertDialog.Builder saveGameBuilder = new AlertDialog.Builder(context)
+                        .setTitle("Save Game File")
+                        .setMessage("Enter a name for your save file: ")
+                        .setView(saveInput)
+                        .setNegativeButton("Save Game", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (!saveInput.getText().toString().equals("")) {
+                                    saveFileName = saveInput.getText().toString();
+                                    tourney.getCurrentRound().saveGame(saveFileName);
+                                    System.exit(1);
+                                }
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog saveGame = saveGameBuilder.show();
+
+
             }
         });
     }
@@ -538,6 +528,18 @@ public class GameScreen extends AppCompatActivity {
                 .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (!tourney.getWinningPlayer().isEmpty()) {
+                            // Tournament is over -> move to next Activity.
+                            Intent endGame = new Intent(context.getApplicationContext(), EndScreen.class);
+
+                            Bundle scores = new Bundle();
+                            scores.putInt("humanScore", tourney.getCurrentRound().getGamePlayers().get(0).getScore());
+                            scores.putInt("computerScore", tourney.getCurrentRound().getGamePlayers().get(1).getScore());
+                            scores.putString("winner", tourney.getWinningPlayer());
+
+                            endGame.putExtras(scores);
+                            context.startActivity(endGame);
+                        }
                         dialog.cancel();
                     }
                 });

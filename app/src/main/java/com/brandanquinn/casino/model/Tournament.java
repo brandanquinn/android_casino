@@ -85,7 +85,7 @@ public class Tournament {
 
     public void loadSavedGame(String fileName) throws IOException {
         File fileDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "serialization");
-        File file = new File(fileDir, "serialization.txt");
+        File file = new File(fileDir, fileName);
 
         String line = "";
         int lineNum = 0;
@@ -223,9 +223,14 @@ public class Tournament {
      */
     private ArrayList<Card> parseCardsFromFile(String line) {
         String parsedStr = line.substring(line.indexOf(':') + 1);
+        ArrayList<Card> parsedCards = new ArrayList<>();
+
+        if (parsedStr.trim().equals("Pile is empty.")) {
+            return parsedCards;
+        }
 
         String[] cardStrings = parsedStr.split("\\s+");
-        ArrayList<Card> parsedCards = new ArrayList<>();
+
 
         for (int i = 0; i < cardStrings.length; i++) {
             if (!cardStrings[i].isEmpty()) {

@@ -176,6 +176,14 @@ public class Table {
     public String getTableString() {
         String tableStr = "";
 
+        for (int i = 0; i < this.currentBuilds.size(); i++) {
+            tableStr += this.currentBuilds.get(i).getBuildString() + " ";
+        }
+
+        for (int i = 0; i < this.tableCards.size(); i++) {
+            tableStr += this.tableCards.get(i).getCardString() + " ";
+        }
+
         return tableStr;
     }
 

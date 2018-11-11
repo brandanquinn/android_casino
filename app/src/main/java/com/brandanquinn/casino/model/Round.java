@@ -1,7 +1,13 @@
 package com.brandanquinn.casino.model;
 
+import android.os.Environment;
+
 import com.brandanquinn.casino.casino.GameScreen;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Round {
@@ -148,6 +154,61 @@ public class Round {
      */
     public void clearGameTable() {
         this.gameTable.clearTableCards();
+    }
+
+    public void saveGame(String fileName) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "serialization");
+        String lastCapturer = "";
+        if (this.gamePlayers.get(0).getCapturedLast()) {
+            lastCapturer = "Human";
+        } else {
+            lastCapturer = "Computer";
+        }
+
+        String nextPlayer = "";
+        if (this.gamePlayers.get(0).getIsPlaying()) {
+            nextPlayer = "Human";
+        } else {
+            nextPlayer = "Computer";
+        }
+
+        try {
+            File saveFile = new File(file, fileName+".txt");
+            FileWriter writer = new FileWriter(saveFile);
+
+            writer.append("Round: " + Integer.toString(this.roundNum));
+            writer.append("\n\n");
+
+            // Computer player info
+            writer.append("Computer: \n");
+            writer.append("\tScore: " + gamePlayers.get(1).getScore() + "\n");
+            writer.append("\tHand: " + gamePlayers.get(1).getHandString() + "\n");
+            writer.append("\tPile: " + gamePlayers.get(1).getPileString());
+            writer.append("\n\n");
+
+            // Human player info
+            writer.append("Human: \n");
+            writer.append("\tScore: " + gamePlayers.get(0).getScore() + "\n");
+            writer.append("\tHand: " + gamePlayers.get(0).getHandString() + "\n");
+            writer.append("\tPile: " + gamePlayers.get(0).getPileString());
+            writer.append("\n\n");
+
+            // Table info
+            writer.append("Table: " + this.gameTable.getTableString());
+            writer.append("\n\n");
+            writer.append("Build Owner: " + getBuildStrings());
+            writer.append("\n\n");
+            writer.append("Last Capturer: " + lastCapturer);
+            writer.append("\n\n");
+            writer.append("Deck: " + this.gameDeck.getDeckString());
+            writer.append("\n\n");
+            writer.append("Next Player: " + nextPlayer);
+            writer.flush();
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -577,5 +638,20 @@ public class Round {
             gamePlayers.get(1).setCapturedLast(true);
             gamePlayers.get(0).setCapturedLast(false);
         }
+    }
+
+    /**
+     * Generates a concatenated String of builds with their respective owners. Used in serialization.
+     * @return String of all builds on the table.
+     */
+    private String getBuildStrings() {
+        String buildStrings = "";
+        ArrayList<Build> currentBuilds = this.gameTable.getCurrentBuilds();
+
+        for (int i = 0; i < currentBuilds.size(); i++) {
+            buildStrings += currentBuilds.get(i).getBuildStringWithOwner() + " ";
+        }
+
+        return buildStrings;
     }
 }

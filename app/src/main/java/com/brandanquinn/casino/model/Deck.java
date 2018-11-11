@@ -78,7 +78,7 @@ public class Deck {
         String deckStr = "";
 
         for (int i = 0; i < this.gameDeck.size(); i++) {
-            deckStr += gameDeck.get(i).getCardString();
+            deckStr += gameDeck.get(i).getCardString() + " ";
         }
 
         return deckStr;

@@ -103,6 +103,11 @@ public class Display {
         displayScores(gamePlayers, whoIsPlaying);
     }
 
+    /**
+     * Generates a LinearLayout with Buttons on it to provide users with an interface to select save file.
+     * @param fileList, ArrayList of available files from the save file directory.
+     * @return Programmatically generated LinearLayout to be used in an AlertDialog
+     */
     public LinearLayout getFileSelection(ArrayList<File> fileList) {
 
         LinearLayout fileGrid = new LinearLayout(appContext);
@@ -114,15 +119,17 @@ public class Display {
 
 
         for (int i = 0; i < fileList.size(); i++) {
-            Button fileButton = new Button(appContext);
-            fileButton.setText(fileList.get(i).getName());
-            fileButton.setTag(fileList.get(i).getName());
-            fileButton.setHeight(50);
-            fileButton.setWidth(200);
-            fileButton.setVisibility(View.VISIBLE);
-            fileButton.setLayoutParams(new LinearLayout.LayoutParams(200, 50));
-            this.fileButtons.add(fileButton);
-            fileGrid.addView(fileButton);
+            if (!fileList.get(i).getName().equals(".txt")) {
+                Button fileButton = new Button(appContext);
+                fileButton.setText(fileList.get(i).getName());
+                fileButton.setTag(fileList.get(i).getName());
+                fileButton.setHeight(50);
+                fileButton.setWidth(200);
+                fileButton.setVisibility(View.VISIBLE);
+                fileButton.setLayoutParams(new LinearLayout.LayoutParams(200, 50));
+                this.fileButtons.add(fileButton);
+                fileGrid.addView(fileButton);
+            }
         }
 
         return fileGrid;

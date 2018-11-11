@@ -34,26 +34,27 @@ public class StartScreen extends AppCompatActivity {
 
         final Button newGame = findViewById(R.id.newgame);
         newGame.setOnClickListener(newGameOnClickListener);
+        newGame.setVisibility(View.GONE);
         newGame.setClickable(false);
 
         final Button loadGame = findViewById(R.id.loadgame);
         loadGame.setOnClickListener(loadGameOnClickListener);
-        loadGame.setClickable(false);
 
         final Button heads = findViewById(R.id.headsButton);
         final Button tails = findViewById(R.id.tailsButton);
+
+        final TextView coinTossMessage = findViewById(R.id.coinTossMessage);
 
         heads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setCoinTossVal(0);
                 TextView debug = findViewById(R.id.debugging);
-                debug.setText("You called heads!");
+                coinTossMessage.setText("You called heads!");
                 heads.setVisibility(View.GONE);
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
                 newGame.setVisibility(View.VISIBLE);
-                loadGame.setClickable(true);
             }
         });
 
@@ -62,12 +63,11 @@ public class StartScreen extends AppCompatActivity {
             public void onClick(View v) {
                 setCoinTossVal(1);
                 TextView debug = findViewById(R.id.debugging);
-                debug.setText("You called tails!");
+                coinTossMessage.setText("You called heads!");
                 heads.setVisibility(View.GONE);
                 tails.setVisibility(View.GONE);
                 newGame.setClickable(true);
                 newGame.setVisibility(View.VISIBLE);
-                loadGame.setClickable(true);
             }
         });
     }
