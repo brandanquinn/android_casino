@@ -13,9 +13,9 @@ public class Table {
      * Default constructor for Table class.
      */
     public Table() {
-        tableBuilds = new ArrayList<>();
-        tableCards = new ArrayList<>();
-        currentBuilds = new ArrayList<>();
+        this.tableBuilds = new ArrayList<>();
+        this.tableCards = new ArrayList<>();
+        this.currentBuilds = new ArrayList<>();
     }
 
     /**
@@ -24,6 +24,9 @@ public class Table {
      * @param currentBuilds, ArrayList of Builds currently on the table.
      */
     public Table(ArrayList<Card> tableCards, ArrayList<Build> currentBuilds) {
+        this.tableBuilds = new ArrayList<>();
+        this.tableCards = new ArrayList<>();
+
         for (int i = 0; i < tableCards.size(); i++) {
             addToTableCards(tableCards.get(i));
         }

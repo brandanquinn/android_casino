@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Environment;
@@ -88,11 +89,20 @@ public class GameScreen extends AppCompatActivity {
         if (roundIsOver) {
             // send tournament information and start new round
             tourney.endRound();
-            setupGameplay(tourney.getCurrentRound());
             displayEndOfRound();
             if (!tourney.getWinningPlayer().isEmpty()) {
                 // Tournament is over -> move to next Activity.
+                Intent endGame = new Intent(context.getApplicationContext(), EndScreen.class);
+
+                Bundle scores = new Bundle();
+                scores.putInt("humanScore", tourney.getCurrentRound().getGamePlayers().get(0).getScore());
+                scores.putInt("computerScore", tourney.getCurrentRound().getGamePlayers().get(1).getScore());
+                scores.putString("winner", tourney.getWinningPlayer());
+
+                endGame.putExtras(scores);
+                context.startActivity(endGame);
             }
+            setupGameplay(tourney.getCurrentRound());
         }
 
         gameDisplay.updateView(tourney.getCurrentRound().getGamePlayers(), tourney.getCurrentRound().getGameTable(), tourney.getCurrentRound().getRoundNum(), tourney.getCurrentRound().whoIsPlaying());
@@ -198,6 +208,10 @@ public class GameScreen extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        setupMoveButtons();
+                        setupCardButtons();
+                        setupGameplay(tourney.getCurrentRound());
+
                         dialog.cancel();
                     }
                 })

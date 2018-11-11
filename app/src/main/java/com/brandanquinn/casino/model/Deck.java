@@ -13,7 +13,7 @@ public class Deck {
         char[] suits = {'S', 'C', 'H', 'D'};
         char[] types = {'2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K', 'A'};
 
-        gameDeck = new ArrayList<>();
+        this.gameDeck = new ArrayList<>();
 
         for (int i = 0; i < 52; i++) {
             this.gameDeck.add(new Card(suits[i/13], types[i%13]));
@@ -28,6 +28,8 @@ public class Deck {
      * @param preLoadedDeck, ArrayList of cards to create preloaded deck with.
      */
     public Deck(ArrayList<Card> preLoadedDeck) {
+        this.gameDeck = new ArrayList<>();
+
         for (int i = 0; i < preLoadedDeck.size(); i++) {
             this.gameDeck.add(preLoadedDeck.get(i));
         }
@@ -50,13 +52,6 @@ public class Deck {
             }
             return cardDrawn;
         }
-    }
-
-    /**
-     * Shuffles the current deck.
-     */
-    public void shuffleDeck() {
-        Collections.shuffle(this.gameDeck);
     }
 
     /**
@@ -87,6 +82,13 @@ public class Deck {
         }
 
         return deckStr;
+    }
+
+    /**
+     * Shuffles the current deck.
+     */
+    private void shuffleDeck() {
+        Collections.shuffle(this.gameDeck);
     }
 }
 

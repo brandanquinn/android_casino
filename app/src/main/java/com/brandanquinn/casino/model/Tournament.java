@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Tournament {
@@ -89,8 +90,8 @@ public class Tournament {
         String line = "";
         int lineNum = 0;
 
-        int currentRoundNum;
-        int computerScore, humanScore;
+        int currentRoundNum = 0;
+        int computerScore = 0, humanScore = 0;
         ArrayList<Card> humanHand = new ArrayList<>();
         ArrayList<Card> humanPile = new ArrayList<>();
         ArrayList<Card> computerHand = new ArrayList<>();
@@ -98,6 +99,11 @@ public class Tournament {
         ArrayList<Card> deckList = new ArrayList<>();
         ArrayList<Card> tableCards = new ArrayList<>();
         ArrayList<String> buildStrings = new ArrayList<>();
+        ArrayList<Build> currentBuilds = new ArrayList<>();
+        String whoCapturedLast = "";
+        boolean humanCapturedLast = false;
+        String nextPlayer = "";
+        boolean humanIsNext = false;
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -129,12 +135,58 @@ public class Tournament {
                         buildStrings = parseBuilds(line.substring(line.indexOf(':') + 1));
                         tableCards = getTableCards(line.substring(line.indexOf(':') + 1));
                         break;
+                    case 14:
+                        currentBuilds = getBuildObjects(buildStrings, line.substring(line.indexOf(':') + 1), humanHand, computerHand);
+                        break;
+                    case 16:
+                        whoCapturedLast = line.substring(line.indexOf(':') + 2);
+                        if (whoCapturedLast.equals("Human")) {
+                            humanCapturedLast = true;
+                        } else {
+                            humanCapturedLast = false;
+                        }
+                        break;
+                    case 18:
+                        deckList = parseCardsFromFile(line);
+                        break;
+                    case 20:
+                        nextPlayer = line.substring(line.indexOf(':') + 2);
+                        if (nextPlayer.equals("Human")) {
+                            humanIsNext = true;
+                        } else {
+                            humanIsNext = false;
+                        }
+                        break;
                 }
                 lineNum++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        modifyTableCards(tableCards, currentBuilds);
+
+        this.gamePlayers.get(0).setHand(humanHand);
+        this.gamePlayers.get(0).setPile(humanPile);
+        this.gamePlayers.get(0).setScore(humanScore);
+
+        if (humanCapturedLast) {
+            this.gamePlayers.get(0).setCapturedLast(true);
+            this.gamePlayers.get(1).setCapturedLast(false);
+        } else {
+            this.gamePlayers.get(0).setCapturedLast(false);
+            this.gamePlayers.get(1).setCapturedLast(true);
+        }
+
+        this.gamePlayers.get(1).setHand(computerHand);
+        this.gamePlayers.get(1).setPile(computerPile);
+        this.gamePlayers.get(1).setScore(computerScore);
+
+        this.roundsPlayed = currentRoundNum;
+
+        Round gameRound = new Round(roundsPlayed, gamePlayers, deckList, tableCards, currentBuilds);
+        this.currentRound = gameRound;
+        this.currentRound.startGame(humanIsNext, true, new ArrayList<Card>());
     }
 
     /**
@@ -218,10 +270,158 @@ public class Tournament {
         return totalBuildStrings;
     }
 
-    ArrayList<Card> getTableCards(String line) {
-        ArrayList<Card> tableCardList = new ArrayList<>();
+    /**
+     * Generates an ArrayList of all table cards on the table.
+     * @param line, String of cards on the table from save file.
+     * @return ArrayList of card objects
+     */
+    private ArrayList<Card> getTableCards(String line) {
+        line = line.replace('[', ' ');
+        line = line.replace(']', ' ');
+
+        ArrayList<Card> tableCardList = parseCardsFromFile(line);
 
         return tableCardList;
+    }
+
+    /**
+     * Parses build owners and creates Build objects
+     * @param buildStrings, ArrayList of build strings
+     * @param line, String of builds and their respective owners from save file
+     * @param humanHand, ArrayList of cards in Human's hand
+     * @param computerHand, ArrayList of cards in Computer's hand
+     * @return ArrayList of Build objects generated.
+     */
+    private ArrayList<Build> getBuildObjects(ArrayList<String> buildStrings, String line, ArrayList<Card> humanHand, ArrayList<Card> computerHand) {
+        ArrayList<Build> buildList = new ArrayList<>();
+
+        for (int i = 0; i < buildStrings.size(); i++) {
+            line = line.replace(buildStrings.get(i), "");
+        }
+
+        String[] owners = line.split("\\s+");
+        ArrayList<String> ownerList = new ArrayList<>();
+
+        for (int i = 0; i < owners.length; i++) {
+            if (!owners[i].isEmpty()) {
+                ownerList.add(owners[i]);
+            }
+        }
+
+        int buildStrVal;
+
+        for (int i = 0; i < ownerList.size(); i++) {
+            buildStrVal = getBuildStrVal(buildStrings.get(i));
+            if (ownerList.get(i).equals("Human")) {
+                for (int j = 0; j < humanHand.size(); j++) {
+                    if (humanHand.get(j).getValue() == buildStrVal) {
+                        buildList.add(new Build(getBuildCards(buildStrings.get(i)), buildStrVal, humanHand.get(j), "Human"));
+                        humanHand.get(j).setLockedToBuild(true);
+                    }
+                }
+            } else {
+                for (int j = 0; j < computerHand.size(); j++) {
+                    if (computerHand.get(j).getValue() == buildStrVal) {
+                        buildList.add(new Build(getBuildCards(buildStrings.get(i)), buildStrVal, computerHand.get(j), "Computer"));
+                        computerHand.get(j).setLockedToBuild(true);
+                    }
+                }
+            }
+        }
+
+        return buildList;
+    }
+
+    /**
+     * Gets the sum value of a build given a build string.
+     * @param buildStr, Build string parsed from save file
+     * @return int value representing sum of build.
+     */
+    private int getBuildStrVal(String buildStr) {
+        int bracketCounter = 0;
+        for (int i = 0; i < buildStr.length(); i++) {
+            if (buildStr.charAt(i) == '[') {
+                bracketCounter++;
+            }
+        }
+
+        buildStr = buildStr.replace("[", "");
+        buildStr = buildStr.replace("]", "");
+
+        ArrayList<Card> buildCards = parseCardsFromFile(buildStr);
+
+        int buildSum = 0;
+        for (int i = 0; i < buildCards.size(); i++) {
+            buildSum += buildCards.get(i).getValue();
+        }
+
+        if (bracketCounter > 1) {
+            bracketCounter -= 1;
+        }
+
+        return buildSum / bracketCounter;
+    }
+
+    /**
+     * Generates 2d ArrayList of Card objects involved in a build.
+     * @param buildStr, Build string from save file
+     * @return 2d ArrayList of Card objects involved in a build.
+     */
+    private ArrayList<ArrayList<Card>> getBuildCards(String buildStr) {
+        ArrayList<ArrayList<Card>> totalBuildCards = new ArrayList<>();
+
+        int bracketCount = 0;
+        for (int i = 0; i < buildStr.length(); i++) {
+            if (buildStr.charAt(i) == '[') {
+                bracketCount++;
+            }
+        }
+
+        if (bracketCount > 1) {
+            buildStr = buildStr.substring(1, buildStr.length() - 1);
+        }
+
+        boolean bracketFound = false;
+        String subBuild = "";
+
+        for (int i = 0; i < buildStr.length(); i++) {
+            if (buildStr.charAt(i) == '[') {
+                bracketFound = true;
+            }
+            if (buildStr.charAt(i) == ']') {
+                bracketFound = false;
+                ArrayList<Card> buildCards = parseCardsFromFile(subBuild);
+                totalBuildCards.add(buildCards);
+                subBuild = "";
+            }
+            if (bracketFound && buildStr.charAt(i) != '[') {
+                subBuild += buildStr.charAt(i);
+            }
+        }
+
+        return totalBuildCards;
+
+    }
+
+    /**
+     * Sets various build attributes to cards involved in builds on the table
+     * @param tableCardsList, List of all cards on the table
+     * @param currentBuilds, ArrayList of all build objects.
+     */
+    private void modifyTableCards(ArrayList<Card> tableCardsList, ArrayList<Build> currentBuilds) {
+        for (int i = 0; i < currentBuilds.size(); i++) {
+            ArrayList<ArrayList<Card>> totalBuildCards = currentBuilds.get(i).getTotalBuildCards();
+            for (int j = 0; j < totalBuildCards.size(); j++) {
+                for (int k = 0; k < totalBuildCards.get(j).size(); k++) {
+                    for (int l = 0; l < tableCardsList.size(); l++) {
+                        if (totalBuildCards.get(j).get(k).getCardString().equals(tableCardsList.get(l).getCardString())) {
+                            tableCardsList.get(l).setBuildBuddies(totalBuildCards.get(j));
+                            tableCardsList.get(l).setPartOfBuild(true);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

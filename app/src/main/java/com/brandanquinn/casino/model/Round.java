@@ -24,6 +24,22 @@ public class Round {
         this.roundIsOver = false;
     }
 
+    /**
+     * Overloaded constructor for Round class. Used for deserialization
+     * @param roundNum, int value used to set current round number
+     * @param gamePlayers, ArrayList of players of the game
+     * @param deckList, ArrayList of Cards in pre-seeded deck
+     * @param tableCards, ArrayList of Cards on pre-seeded table
+     * @param currentBuilds, ArrayList of Build objects from saved file.
+     */
+    public Round(int roundNum, ArrayList<Player> gamePlayers, ArrayList<Card> deckList, ArrayList<Card> tableCards, ArrayList<Build> currentBuilds) {
+        this.roundNum = roundNum;
+        this.gameDeck = new Deck(deckList);
+        this.gameTable = new Table(tableCards, currentBuilds);
+        this.gamePlayers = gamePlayers;
+        this.roundIsOver = false;
+    }
+
 
     /**
      * Getter for gamePlayers private member variable.
