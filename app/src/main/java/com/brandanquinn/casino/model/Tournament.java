@@ -23,6 +23,7 @@ public class Tournament {
     private String winningPlayer;
     private String humanFinalPile, computerFinalPile;
     private int humanPileSize, computerPileSize, humanSpades, computerSpades;
+    private int humanOldSCore, computerOldScore;
 
     /**
      * Default constructor for the Tournament class
@@ -434,11 +435,13 @@ public class Tournament {
      */
     private void computePlayerScores() {
         int p1CurrentScore = this.gamePlayers.get(0).getScore();
+        this.humanOldSCore = p1CurrentScore;
         ArrayList<Card> p1CurrentPile = this.gamePlayers.get(0).getPile();
         this.humanFinalPile = this.gamePlayers.get(0).getPileString();
         this.humanPileSize = p1CurrentPile.size();
 
         int p2CurrentScore = this.gamePlayers.get(1).getScore();
+        this.computerOldScore = p2CurrentScore;
         ArrayList<Card> p2CurrentPile = this.gamePlayers.get(1).getPile();
         this.computerFinalPile = this.gamePlayers.get(1).getPileString();
         this.computerPileSize = p2CurrentPile.size();
@@ -504,6 +507,8 @@ public class Tournament {
         report += "Computer pile size: " + computerPileSize + '\n';
         report += "Human spades count: " + humanSpades + '\n';
         report += "Computer spades count: " + computerSpades + '\n';
+        report += "Human gained: " + (gamePlayers.get(0).getScore() - humanOldSCore) + " points.\n";
+        report += "Computer gained: " + (gamePlayers.get(1).getScore() - computerOldScore) + " points.\n";
         report += "Human current score: " + gamePlayers.get(0).getScore() + '\n';
         report += "Computer current score: " + gamePlayers.get(1).getScore() + '\n';
 

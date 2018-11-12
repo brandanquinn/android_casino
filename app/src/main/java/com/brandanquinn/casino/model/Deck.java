@@ -34,7 +34,9 @@ public class Deck {
             this.gameDeck.add(preLoadedDeck.get(i));
         }
 
-        this.topOfDeck = this.gameDeck.get(0);
+        if (!this.gameDeck.isEmpty()) {
+            this.topOfDeck = this.gameDeck.get(0);
+        }
     }
 
     /**

@@ -286,7 +286,7 @@
 
     <TextView
         android:id="@+id/moveDisplay"
-        android:layout_width="246dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -297,7 +297,7 @@
         android:inputType="textPersonName"
         android:text=""
         android:textColor="#7bb3ff"
-        android:textSize="18dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.741"

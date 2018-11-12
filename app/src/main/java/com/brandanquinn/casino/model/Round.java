@@ -18,6 +18,7 @@ public class Round {
     private ArrayList<Player> gamePlayers;
     private boolean roundIsOver;
     private String previousMove;
+    private String recommendedMove;
 
     /**
      * Overloaded constructor for Round class.
@@ -31,6 +32,7 @@ public class Round {
         this.gamePlayers = gamePlayers;
         this.roundIsOver = false;
         this.previousMove = "";
+        this.recommendedMove = "";
     }
 
     /**
@@ -48,6 +50,7 @@ public class Round {
         this.gamePlayers = gamePlayers;
         this.roundIsOver = false;
         this.previousMove = "";
+        this.recommendedMove = "";
     }
 
 
@@ -81,6 +84,14 @@ public class Round {
      */
     public String getPreviousMove() {
         return previousMove;
+    }
+
+    /**
+     * Getter for recommendedMove private member variable
+     * @return String rerpresenting the AI recommended move for player.
+     */
+    public String getRecommendedMove() {
+        return recommendedMove;
     }
 
     /**
@@ -138,6 +149,20 @@ public class Round {
         }
 
         return playing + " is playing.";
+    }
+
+    /**
+     * Get Player who is currently playing.
+     * @return Player who's turn it is.
+     */
+    public Player getCurrentPlayer() {
+        for (int i = 0; i < this.gamePlayers.size(); i++) {
+            if (gamePlayers.get(i).getIsPlaying()) {
+                return gamePlayers.get(i);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -240,41 +265,50 @@ public class Round {
      * @param gamePlayer, Player currently making a move.
      * @return String to tell user what move was made.
      */
-    public String playTurn(Player gamePlayer) {
+    public String playTurn(Player gamePlayer, boolean makingMove) {
         boolean possibleMoveSelected = false;
         this.previousMove = "";
+        this.recommendedMove = "";
         while (!gamePlayer.handIsEmpty() && !possibleMoveSelected) {
             Move moveObj = gamePlayer.play();
             if (moveObj.getMoveType().equals("trail")) {
-                possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer);
+                possibleMoveSelected = trail(moveObj.getCardSelectedFromHand(), gamePlayer, makingMove);
                 if (possibleMoveSelected) {
-                    changeTurn();
+                    if (makingMove) {
+                        changeTurn();
+                    }
                     return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Trail move cannot be made.";
                 }
             } else if (moveObj.getMoveType().equals("build")) {
-                possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer);
+                possibleMoveSelected = build(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getCardsSelectedFromTable(), gamePlayer, makingMove);
                 if (possibleMoveSelected) {
-                    changeTurn();
+                    if (makingMove) {
+                        changeTurn();
+                    }
                     return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Build move cannot be made with cards selected.";
                 }
             } else if (moveObj.getMoveType().equals("capture")) {
-                possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                possibleMoveSelected = capture(moveObj.getCardSelectedFromHand(), moveObj.getCardsSelectedFromTable(), moveObj.getBuildsSelectedFromTable(), gamePlayer, makingMove);
                 if (possibleMoveSelected) {
                     setCapturedLast(gamePlayer);
-                    changeTurn();
+                    if (makingMove) {
+                        changeTurn();
+                    }
                     return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Capture move cannot be made with cards selected.";
                 }
             } else if (moveObj.getMoveType().equals("increase")) {
                 // increase
-                possibleMoveSelected = increase(moveObj.getCardPlayedFromHand(), moveObj.getCardSelectedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer);
+                possibleMoveSelected = increase(moveObj.getCardSelectedFromHand(), moveObj.getCardPlayedFromHand(), moveObj.getBuildsSelectedFromTable(), gamePlayer, makingMove);
                 if (possibleMoveSelected) {
-                    changeTurn();
+                    if (makingMove) {
+                        changeTurn();
+                    }
                     return "" + gamePlayer.getPlayerIdentity() + " selected to " + moveObj.getMoveType() + " with card: " + moveObj.getCardSelectedFromHand().getCardString();
                 } else {
                     return "Cannot increase build with cards selected.";
@@ -282,7 +316,9 @@ public class Round {
             }
         }
 
-        changeTurn();
+        if (makingMove) {
+            changeTurn();
+        }
         return "Move cannot be made.";
     }
 
@@ -316,14 +352,26 @@ public class Round {
      * @param gamePlayer, Player making the trail move
      * @return boolean value determining whether or not move was made.
      */
-    private boolean trail(Card cardPlayed, Player gamePlayer) {
+    private boolean trail(Card cardPlayed, Player gamePlayer, boolean makingMove) {
         if (cardPlayed.getLockedToBuild()) {
             return false;
         }
-        gamePlayer.discard(cardPlayed);
-        this.gameTable.addToTableCards(cardPlayed);
 
-        this.previousMove += gamePlayer.getPlayerIdentity() + " has trailed card: " + cardPlayed.getCardString();
+        for (int i = 0; i < gamePlayer.getHand().size(); i++) {
+            if (gamePlayer.getHand().get(i).getLockedToBuild()) {
+                return false;
+            }
+        }
+
+        if (makingMove) {
+            gamePlayer.discard(cardPlayed);
+            this.gameTable.addToTableCards(cardPlayed);
+            this.previousMove += gamePlayer.getPlayerIdentity() + " has trailed card: " + cardPlayed.getCardString();
+        } else {
+            this.recommendedMove += "Trail with card: " + cardPlayed.getCardString();
+        }
+
+
 
         return true;
     }
@@ -336,7 +384,7 @@ public class Round {
      * @param gamePlayer, Player currently making move.
      * @return
      */
-    private boolean build(Card lockedCard, Card playedCard, ArrayList<Card> selectedFromTable, Player gamePlayer) {
+    private boolean build(Card lockedCard, Card playedCard, ArrayList<Card> selectedFromTable, Player gamePlayer, boolean makingMove) {
         boolean extendingBuild = false;
 
         if (lockedCard.getLockedToBuild()) { extendingBuild = true; }
@@ -365,35 +413,43 @@ public class Round {
 
         if (!extendingBuild) {
             // creating new single build
-            ArrayList<ArrayList<Card>> totalBuildCards = new ArrayList<>();
-            totalBuildCards.add(buildCards);
-            Build b1 = new Build(totalBuildCards, selectedVal, lockedCard, gamePlayer.getPlayerIdentity());
-            this.gameTable.addBuild(b1);
-            for (int i = 0; i < buildCards.size(); i++) {
-                buildCards.get(i).setPartOfBuild(true);
+
+            if (makingMove) {
+                ArrayList<ArrayList<Card>> totalBuildCards = new ArrayList<>();
+                totalBuildCards.add(buildCards);
+                Build b1 = new Build(totalBuildCards, selectedVal, lockedCard, gamePlayer.getPlayerIdentity());
+                this.gameTable.addBuild(b1);
+                for (int i = 0; i < buildCards.size(); i++) {
+                    buildCards.get(i).setPartOfBuild(true);
+                }
+                playedCard.setBuildBuddies(buildCards);
+                gamePlayer.discard(playedCard);
+                this.gameTable.addToTableCards(playedCard);
+                lockedCard.setLockedToBuild(true);
+
+                this.previousMove += gamePlayer.getPlayerIdentity() + " has created a new build by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
+            } else {
+                this.recommendedMove += "Create a new build by selecting: " + lockedCard.getCardString() + " and playing: " + playedCard.getCardString() + " with table card(s) " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
             }
-            playedCard.setBuildBuddies(buildCards);
-            gamePlayer.discard(playedCard);
-            this.gameTable.addToTableCards(playedCard);
-            lockedCard.setLockedToBuild(true);
-
-            this.previousMove += gamePlayer.getPlayerIdentity() + " has created a new build by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
-
             return true;
         } else {
             // extending current build to a multi build
             Build b1 = getCorrectBuild(lockedCard);
             String oldBuildStr = b1.getBuildString();
-            b1.extendBuild(buildCards);
-            for (int i = 0; i < buildCards.size(); i++) {
-                buildCards.get(i).setPartOfBuild(true);
+
+            if (makingMove) {
+                b1.extendBuild(buildCards);
+                for (int i = 0; i < buildCards.size(); i++) {
+                    buildCards.get(i).setPartOfBuild(true);
+                }
+                playedCard.setBuildBuddies(buildCards);
+                gamePlayer.discard(playedCard);
+                this.gameTable.addToTableCards(playedCard);
+
+                this.previousMove += gamePlayer.getPlayerIdentity() + " has extended: " + oldBuildStr + " by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
+            } else {
+                this.recommendedMove += "Extend: " + oldBuildStr + " selecting: " + lockedCard.getCardString() + " and playing: " + playedCard.getCardString() + " with table card(s) " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
             }
-            playedCard.setBuildBuddies(buildCards);
-            gamePlayer.discard(playedCard);
-            this.gameTable.addToTableCards(playedCard);
-
-            this.previousMove += gamePlayer.getPlayerIdentity() + " has extended: " + oldBuildStr  + " by playing: " + playedCard.getCardString() + " with table card(s): " + cardListToString(new ArrayList<>(buildCards.subList(1, buildCards.size())));
-
             return true;
         }
     }
@@ -421,7 +477,7 @@ public class Round {
      * @param gamePlayer, Player making the move.
      * @return boolean value determining whether or not the capture move was made.
      */
-    private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, ArrayList<Build> selectedBuilds, Player gamePlayer) {
+    private boolean capture(Card cardPlayed, ArrayList<Card> selectedCards, ArrayList<Build> selectedBuilds, Player gamePlayer, boolean makingMove) {
         ArrayList<Card> tableCards = new ArrayList<>(this.gameTable.getTableCards());
         for (int i = 0; i < tableCards.size(); i++) {
             if ((tableCards.get(i).getValue() == cardPlayed.getValue()) && !selectedCards.contains(tableCards.get(i))) {
@@ -467,31 +523,36 @@ public class Round {
            return false;
        }
 
-       gamePlayer.discard(cardPlayed);
-       this.gameTable.removeCards(capturableCards);
-       this.gameTable.removeSets(capturableSets);
-       this.gameTable.removeBuilds(capturableBuilds);
+        ArrayList<Card> pileAdditions = new ArrayList<>();
+        pileAdditions.add(cardPlayed);
 
-       ArrayList<Card> pileAdditions = new ArrayList<>();
-       pileAdditions.add(cardPlayed);
+        pileAdditions.addAll(capturableCards);
 
-       pileAdditions.addAll(capturableCards);
+        for (int i = 0; i < capturableSets.size(); i++) {
+            pileAdditions.addAll(capturableSets.get(i));
+        }
 
-       for (int i = 0; i < capturableSets.size(); i++) {
-           pileAdditions.addAll(capturableSets.get(i));
+        for (int i = 0; i < capturableBuilds.size(); i++) {
+            capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
+            ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
+            for (int j = 0; j < tempBuildCards.size(); j++) {
+                pileAdditions.addAll(tempBuildCards.get(j));
+            }
+        }
+
+       if (makingMove) {
+           gamePlayer.discard(cardPlayed);
+           this.gameTable.removeCards(capturableCards);
+           this.gameTable.removeSets(capturableSets);
+           this.gameTable.removeBuilds(capturableBuilds);
+
+
+           gamePlayer.addToPile(pileAdditions);
+
+           this.previousMove += gamePlayer.getPlayerIdentity() + " has captured " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
+       } else {
+           this.recommendedMove += "Capture these cards: " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
        }
-
-       for (int i = 0; i < capturableBuilds.size(); i++) {
-           capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
-           ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
-           for (int j = 0; j < tempBuildCards.size(); j++) {
-               pileAdditions.addAll(tempBuildCards.get(j));
-           }
-       }
-       gamePlayer.addToPile(pileAdditions);
-
-       this.previousMove += gamePlayer.getPlayerIdentity() + " has captured " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + "by playing card: " + cardPlayed.getCardString();
-
        return true;
 
     }
@@ -639,7 +700,7 @@ public class Round {
      * @param gamePlayer, Player making move
      * @return boolean value representing whether or not move was made.
      */
-    private boolean increase(Card lockedCard, Card playedCard, ArrayList<Build> buildsSelected, Player gamePlayer) {
+    private boolean increase(Card lockedCard, Card playedCard, ArrayList<Build> buildsSelected, Player gamePlayer, boolean makingMove) {
         if (buildsSelected.isEmpty()) {
             return false;
         }
@@ -656,12 +717,16 @@ public class Round {
                 && !gamePlayer.getPlayerIdentity().equals(buildsSelected.get(0).getBuildOwner())) {
             // increase is possible.
             String oldBuildStr = buildsSelected.get(0).getBuildString();
-            buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerIdentity());
-            buildsSelected.get(0).getSumCard().setLockedToBuild(false);
-            buildsSelected.get(0).setSumCard(lockedCard);
-            lockedCard.setLockedToBuild(true);
+            if (makingMove) {
+                buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerIdentity());
+                buildsSelected.get(0).getSumCard().setLockedToBuild(false);
+                buildsSelected.get(0).setSumCard(lockedCard);
+                lockedCard.setLockedToBuild(true);
 
-            this.previousMove += gamePlayer.getPlayerIdentity() + " has increased and claimed build: " + oldBuildStr + " by playing: " + playedCard.getCardString();
+                this.previousMove += gamePlayer.getPlayerIdentity() + " has increased and claimed build: " + oldBuildStr + " by playing: " + playedCard.getCardString();
+            } else {
+                this.recommendedMove += "Select: " + lockedCard.getCardString() + " and play: " + playedCard.getCardString() + " to increase and claim build: " + oldBuildStr;
+            }
 
             return true;
         }

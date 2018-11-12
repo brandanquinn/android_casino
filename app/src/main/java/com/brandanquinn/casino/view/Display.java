@@ -1,7 +1,6 @@
 package com.brandanquinn.casino.view;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -21,13 +20,8 @@ import com.brandanquinn.casino.model.Card;
 import com.brandanquinn.casino.model.Player;
 import com.brandanquinn.casino.model.Table;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 public class Display {
     private ArrayList<Button> fileButtons;

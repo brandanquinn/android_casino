@@ -330,7 +330,6 @@ public class Player {
      * @param moveSelected, Move type selected
      */
     private void generateMoveObj(Card cardSelected, String moveSelected) {
-        recommendedMove.setCardSelectedFromHand(cardSelected);
         recommendedMove.setMoveType(moveSelected);
         if (moveSelected.equals("increase")) {
             assessIncrease(cardSelected, true);
@@ -338,6 +337,8 @@ public class Player {
             assessBuild(cardSelected, true);
         } else if (moveSelected.equals("capture")) {
             assessCapture(cardSelected, true);
+        } else {
+            recommendedMove.setCardSelectedFromHand(cardSelected);
         }
     }
 
@@ -356,7 +357,8 @@ public class Player {
                     if (currentBuilds.get(i).getSumVal() + cardSelected.getValue() == this.hand.get(j).getValue()
                             && !currentBuilds.get(i).getIsMultiBuild()) {
                         if (makingMove) {
-                            recommendedMove.setCardPlayedFromHand(this.hand.get(j));
+                            recommendedMove.setCardSelectedFromHand(this.hand.get(j));
+                            recommendedMove.setCardPlayedFromHand(cardSelected);
                             recommendedMove.addBuildSelectedFromTable(currentBuilds.get(i));
                         }
                         return this.hand.get(j).getValue();
@@ -435,6 +437,7 @@ public class Player {
 
             if (playedVal + buildCard.getValue() == selectedVal && !extendingBuild) {
                 if (makingMove) {
+                    recommendedMove.setCardSelectedFromHand(cardSelected);
                     recommendedMove.setCardPlayedFromHand(cardPlayed);
                     recommendedMove.setCardsSelectedFromTable(new ArrayList<>(buildCards.subList(1, buildCards.size())));
                 }
@@ -442,6 +445,7 @@ public class Player {
             } else if (playedVal + buildCard.getValue() == selectedVal && extendingBuild) {
                 Build b1 = getCorrectBuild(cardSelected);
                 if (makingMove) {
+                    recommendedMove.setCardSelectedFromHand(cardSelected);
                     recommendedMove.setCardPlayedFromHand(cardPlayed);
                     recommendedMove.setCardsSelectedFromTable(new ArrayList<>(buildCards.subList(1, buildCards.size())));
                 }
@@ -494,6 +498,7 @@ public class Player {
         ArrayList<Card> pileAdditions = new ArrayList<>();
 
         if (makingMove) {
+            recommendedMove.setCardSelectedFromHand(cardPlayed);
             recommendedMove.setCardsSelectedFromTable(getAllTableCards(capturableSets, capturableCards));
             recommendedMove.setBuildsSelectedFromTable(capturableBuilds);
         }

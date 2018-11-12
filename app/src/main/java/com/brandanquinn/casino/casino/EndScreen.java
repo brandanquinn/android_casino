@@ -1,5 +1,6 @@
 package com.brandanquinn.casino.casino;
 
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ public class EndScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end_screen);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Bundle endState = getIntent().getExtras();
 
@@ -19,8 +21,8 @@ public class EndScreen extends AppCompatActivity {
         TextView humanScore = findViewById(R.id.humanScore);
         TextView computerScore = findViewById(R.id.computerScore);
 
-        humanScore.setText(Integer.toString(endState.getInt("humanScore")));
-        computerScore.setText(Integer.toString(endState.getInt("computerScore")));
+        humanScore.setText("H: " + Integer.toString(endState.getInt("humanScore")));
+        computerScore.setText("C: " + Integer.toString(endState.getInt("computerScore")));
 
         if (endState.getString("winner").equals("tie")) {
             winnerMessage.setText("Human and Computer players have tied!");
