@@ -1,8 +1,5 @@
 package com.brandanquinn.casino.model;
 
-import android.util.Pair;
-
-import java.util.ArrayList;
 
 public class Computer extends Player{
     /**

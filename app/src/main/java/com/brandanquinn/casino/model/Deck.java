@@ -3,6 +3,9 @@ package com.brandanquinn.casino.model;
 import java.util.*;
 
 public class Deck {
+    private static final int DECK_SIZE = 52;
+    private static final int CARD_SET = 13;
+    private static final int TOP_OF_DECK = 0;
     private ArrayList<Card> gameDeck;
     private Card topOfDeck;
 
@@ -15,12 +18,12 @@ public class Deck {
 
         this.gameDeck = new ArrayList<>();
 
-        for (int i = 0; i < 52; i++) {
-            this.gameDeck.add(new Card(suits[i/13], types[i%13]));
+        for (int i = 0; i < DECK_SIZE; i++) {
+            this.gameDeck.add(new Card(suits[i/CARD_SET], types[i%CARD_SET]));
         }
 
         shuffleDeck();
-        this.topOfDeck = this.gameDeck.get(0);
+        this.topOfDeck = this.gameDeck.get(TOP_OF_DECK);
     }
 
     /**
@@ -35,7 +38,7 @@ public class Deck {
         }
 
         if (!this.gameDeck.isEmpty()) {
-            this.topOfDeck = this.gameDeck.get(0);
+            this.topOfDeck = this.gameDeck.get(TOP_OF_DECK);
         }
     }
 
@@ -50,7 +53,7 @@ public class Deck {
             Card cardDrawn = this.topOfDeck;
             gameDeck.remove(cardDrawn);
             if (!this.gameDeck.isEmpty()) {
-                this.topOfDeck = gameDeck.get(0);
+                this.topOfDeck = gameDeck.get(TOP_OF_DECK);
             }
             return cardDrawn;
         }

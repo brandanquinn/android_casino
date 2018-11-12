@@ -4,11 +4,9 @@ import android.os.Environment;
 
 import com.brandanquinn.casino.casino.GameScreen;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Round {
@@ -549,9 +547,9 @@ public class Round {
 
            gamePlayer.addToPile(pileAdditions);
 
-           this.previousMove += gamePlayer.getPlayerIdentity() + " has captured " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
+           this.previousMove += gamePlayer.getPlayerIdentity() + " has captured " + cardListToString(new ArrayList<>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
        } else {
-           this.recommendedMove += "Capture these cards: " + cardListToString(new ArrayList<Card>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
+           this.recommendedMove += "Capture these cards: " + cardListToString(new ArrayList<>(pileAdditions.subList(1, pileAdditions.size()))) + " by playing card: " + cardPlayed.getCardString();
        }
        return true;
 
@@ -659,20 +657,6 @@ public class Round {
         }
 
         return sum;
-    }
-
-    /**
-     * Filters out Cards from a list that can't be used in a build.
-     * @param availableCards, ArrayList of Cards available to build with
-     * @param playedVal, int value of current cards played into build
-     * @param buildSum, int sum value of the build
-     */
-    private void filterBuildOptions(ArrayList<Card> availableCards, int playedVal, int buildSum) {
-        for (int i = 0; i < availableCards.size(); i++) {
-            if (availableCards.get(i).getValue() + playedVal > buildSum) {
-                availableCards.remove(availableCards.get(i));
-            }
-        }
     }
 
     /**

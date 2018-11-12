@@ -1,10 +1,5 @@
 package com.brandanquinn.casino.model;
 
-import android.util.Pair;
-
-import com.brandanquinn.casino.casino.GameScreen;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Human extends Player {

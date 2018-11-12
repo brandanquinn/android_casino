@@ -15,6 +15,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Tournament {
+    private static final int WINNING_SCORE = 21;
+
     private Round currentRound;
     private int roundsPlayed;
     private int cardCount;
@@ -199,11 +201,12 @@ public class Tournament {
 
         computePlayerScores();
 
-        if (this.gamePlayers.get(0).getScore() >= 21 && this.gamePlayers.get(1).getScore() >= 21) {
+        if ((this.gamePlayers.get(0).getScore() >= WINNING_SCORE && this.gamePlayers.get(1).getScore() >= WINNING_SCORE)
+                && this.gamePlayers.get(0).getScore() == this.gamePlayers.get(1).getScore()) {
             this.winningPlayer = "tie";
-        } else if (this.gamePlayers.get(0).getScore() >= 21) {
+        } else if (this.gamePlayers.get(0).getScore() >= WINNING_SCORE) {
             this.winningPlayer = gamePlayers.get(0).getPlayerIdentity();
-        } else if (this.gamePlayers.get(1).getScore() >= 21) {
+        } else if (this.gamePlayers.get(1).getScore() >= WINNING_SCORE) {
             this.winningPlayer = gamePlayers.get(1).getPlayerIdentity();
         } else {
             this.gamePlayers.get(0).clearHand();
