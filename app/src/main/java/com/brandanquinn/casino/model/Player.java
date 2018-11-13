@@ -355,16 +355,16 @@ public class Player {
             if (!currentBuilds.get(i).getBuildOwner().equals(getPlayerIdentity())) {
                 for (int j = 0; j < this.hand.size(); j++) {
                     int playedVal;
-                    if (this.hand.get(j).getType() == 'A') {
+                    if (this.hand.get(j).getType() == 'A' && !cardSelected.getCardString().equals(this.hand.get(j).getCardString())) {
                         playedVal = 1;
                     } else {
                         playedVal = this.hand.get(j).getValue();
                     }
-                    if (currentBuilds.get(i).getSumVal() + cardSelected.getValue() == playedVal
+                    if (currentBuilds.get(i).getSumVal() + playedVal == cardSelected.getValue()
                             && !currentBuilds.get(i).getIsMultiBuild()) {
                         if (makingMove) {
-                            recommendedMove.setCardSelectedFromHand(this.hand.get(j));
-                            recommendedMove.setCardPlayedFromHand(cardSelected);
+                            recommendedMove.setCardSelectedFromHand(cardSelected);
+                            recommendedMove.setCardPlayedFromHand(this.hand.get(j));
                             recommendedMove.addBuildSelectedFromTable(currentBuilds.get(i));
                         }
                         return this.hand.get(j).getValue();
@@ -408,7 +408,7 @@ public class Player {
      */
     private int createBuilds(Card cardSelected, Card cardPlayed, boolean extendingBuild, boolean makingMove) {
         int selectedVal = cardSelected.getValue();
-        if (cardPlayed.getValue() >= selectedVal) {
+        if (cardPlayed.getValue() >= selectedVal && cardPlayed.getType() != 'A') {
             return 0;
         }
 

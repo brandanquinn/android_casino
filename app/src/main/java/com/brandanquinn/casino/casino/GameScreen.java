@@ -104,7 +104,6 @@ public class GameScreen extends AppCompatActivity {
             // send tournament information and start new round
             tourney.endRound();
             displayEndOfRound();
-            setupGameplay(tourney.getCurrentRound());
         }
 
         gameDisplay.updateView(tourney.getCurrentRound().getGamePlayers(), tourney.getCurrentRound().getGameTable(),
@@ -612,6 +611,7 @@ public class GameScreen extends AppCompatActivity {
                             endGame.putExtras(scores);
                             context.startActivity(endGame);
                         }
+                        setupGameplay(tourney.getCurrentRound());
                         dialog.cancel();
                     }
                 });

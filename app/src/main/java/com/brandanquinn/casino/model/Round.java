@@ -720,11 +720,19 @@ public class Round {
             return false;
         }
 
-        if ((lockedCard.getValue() == playedCard.getValue() + buildsSelected.get(0).getSumVal())
+        int playedVal;
+        if (playedCard.getType() == 'A') {
+            playedVal = 1;
+        } else {
+            playedVal = playedCard.getType();
+        }
+
+        if ((lockedCard.getValue() == playedVal + buildsSelected.get(0).getSumVal())
                 && !gamePlayer.getPlayerIdentity().equals(buildsSelected.get(0).getBuildOwner())) {
             // increase is possible.
             String oldBuildStr = buildsSelected.get(0).getBuildString();
             if (makingMove) {
+                gamePlayer.discard(playedCard);
                 buildsSelected.get(0).increaseBuild(playedCard, gamePlayer.getPlayerIdentity());
                 buildsSelected.get(0).getSumCard().setLockedToBuild(false);
                 buildsSelected.get(0).setSumCard(lockedCard);
