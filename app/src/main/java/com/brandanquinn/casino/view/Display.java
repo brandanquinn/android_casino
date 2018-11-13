@@ -131,6 +131,32 @@ public class Display {
     }
 
     /**
+     *
+     * @param buildStr
+     * @param currentBuilds
+     * @return
+     */
+    public LinearLayout getBuildView(String buildStr, ArrayList<Build> currentBuilds) {
+        LinearLayout layout = new LinearLayout(appContext);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layout.setLayoutParams(params);
+
+        for (int i = 0; i < currentBuilds.size(); i++) {
+            if (currentBuilds.get(i).getBuildStringForView().equals(buildStr)) {
+                ArrayList<ArrayList<Card>> totalBuildCards = currentBuilds.get(i).getTotalBuildCards();
+                for (int j = 0; j < totalBuildCards.size(); j++) {
+                    for (int k = 0; k < totalBuildCards.get(j).size(); k++) {
+                        layout.addView(createComputerView(totalBuildCards.get(j).get(k)));
+                    }
+                }
+
+            }
+        }
+
+        return layout;
+    }
+
+    /**
      * Adds dynamically created cards to their respective grids in the view.
      * @param gamePlayers, ArrayList of game players
      * @param gameTable, Table object used to access cards/builds on the table
@@ -256,7 +282,7 @@ public class Display {
 
         // Max width of table is 1268 dp
         if (layoutId == "tableCards" && numCards > 8) {
-            int width = 1268 / numCards;
+            int width = 1085 / numCards;
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
         } else {
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(150, 180));

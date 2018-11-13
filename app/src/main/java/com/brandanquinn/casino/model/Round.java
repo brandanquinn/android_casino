@@ -363,6 +363,12 @@ public class Round {
             return false;
         }
 
+        for (int i = 0; i < this.gameTable.getTableCards().size(); i++) {
+            if (cardPlayed.getType() == this.gameTable.getTableCards().get(i).getType()) {
+                return false;
+            }
+        }
+
         for (int i = 0; i < gamePlayer.getHand().size(); i++) {
             if (gamePlayer.getHand().get(i).getLockedToBuild()) {
                 return false;

@@ -515,6 +515,27 @@ public class GameScreen extends AppCompatActivity {
 
                     }
                 });
+                buildButtons.get(i).setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        LinearLayout layout = gameDisplay.getBuildView(v.getTag().toString(), tourney.getCurrentRound().getGameTable().getCurrentBuilds());
+
+                        AlertDialog.Builder buildDisplayBuilder = new AlertDialog.Builder(context)
+                                .setTitle("Build cards")
+                                .setMessage("Cards involved in a build: ")
+                                .setView(layout)
+                                .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        AlertDialog saveGame = buildDisplayBuilder.show();
+
+                        return true;
+                    }
+                });
             }
         }
     }
