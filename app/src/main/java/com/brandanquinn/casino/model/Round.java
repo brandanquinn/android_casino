@@ -402,7 +402,12 @@ public class Round {
         if (lockedCard.getLockedToBuild()) { extendingBuild = true; }
 
         int selectedVal = lockedCard.getValue();
-        int playedVal = playedCard.getValue();
+        int playedVal;
+        if (playedCard.getType() == 'A') {
+            playedVal = 1;
+        } else {
+            playedVal = playedCard.getValue();
+        }
 
         if (playedVal >= selectedVal) { return false; }
 
@@ -517,9 +522,11 @@ public class Round {
        int playedVal = cardPlayed.getValue();
        ArrayList<Card> capturableCards = new ArrayList<>();
 
+        ArrayList<ArrayList<Card>> capturableSets = getCapturableSets(selectedCards, playedVal);
+
        // Iterate through selected cards and pull off same val capturable cards.
        for (int i = 0; i < selectedCards.size(); i++) {
-           if (selectedCards.get(i).getValue() == playedVal) {
+           if (selectedCards.get(i).getType() == cardPlayed.getType()) {
                capturableCards.add(selectedCards.get(i));
            }
        }
@@ -527,8 +534,6 @@ public class Round {
        for (int i = 0; i < capturableCards.size(); i++) {
            selectedCards.remove(capturableCards.get(i));
        }
-
-       ArrayList<ArrayList<Card>> capturableSets = getCapturableSets(selectedCards, playedVal);
 
        // If you have selected cards that cannot be captured. Invalid move selected.
        if (!selectedCards.isEmpty()) {
@@ -667,7 +672,11 @@ public class Round {
     private int getSetValue(ArrayList<Card> set) {
         int sum = 0;
         for (int i = 0; i < set.size(); i++) {
-            sum += set.get(i).getValue();
+            if (set.get(i).getType() == 'A') {
+                sum += 1;
+            } else {
+                sum += set.get(i).getValue();
+            }
         }
 
         return sum;

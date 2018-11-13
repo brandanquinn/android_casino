@@ -131,10 +131,10 @@ public class Display {
     }
 
     /**
-     *
-     * @param buildStr
-     * @param currentBuilds
-     * @return
+     * Creates a LinearLayout with card ImageButtons involved in a build.
+     * @param buildStr, String representing the build object
+     * @param currentBuilds, ArrayList of Build objects on the table
+     * @return LinearLayout with ImageButtons
      */
     public LinearLayout getBuildView(String buildStr, ArrayList<Build> currentBuilds) {
         LinearLayout layout = new LinearLayout(appContext);
@@ -146,7 +146,7 @@ public class Display {
                 ArrayList<ArrayList<Card>> totalBuildCards = currentBuilds.get(i).getTotalBuildCards();
                 for (int j = 0; j < totalBuildCards.size(); j++) {
                     for (int k = 0; k < totalBuildCards.get(j).size(); k++) {
-                        layout.addView(createComputerView(totalBuildCards.get(j).get(k)));
+                        layout.addView(createComputerView(totalBuildCards.get(j).get(k), currentBuilds.get(i).getBuildSize()));
                     }
                 }
 
@@ -202,7 +202,7 @@ public class Display {
         humanGrid.addView(humanPile);
 
         for (int i = 0; i < computerHand.size(); i++) {
-            computerGrid.addView(createComputerView(computerHand.get(i)));
+            computerGrid.addView(createComputerView(computerHand.get(i), 4));
         }
         computerPile = new Button(appContext);
         computerPile.setText("Computer Pile");
@@ -302,7 +302,7 @@ public class Display {
      * @param gameCard, Card obj from player's hand.
      * @return ImageView created from card obj reference.
      */
-    private ImageView createComputerView(Card gameCard) {
+    private ImageView createComputerView(Card gameCard, int cardNum) {
         ImageView cardView = new ImageView(appContext);
 
         if (gameCard.getLockedToBuild()) {
@@ -318,7 +318,11 @@ public class Display {
         cardView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         cardView.setTag(gameCard.getCardString());
 
-        cardView.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+        if (cardNum < 5) {
+            cardView.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+        } else {
+            cardView.setLayoutParams(new LinearLayout.LayoutParams(900 / cardNum, 180));
+        }
 
         return cardView;
     }

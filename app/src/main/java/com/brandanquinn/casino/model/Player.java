@@ -354,7 +354,13 @@ public class Player {
         for (int i = 0; i < currentBuilds.size(); i++) {
             if (!currentBuilds.get(i).getBuildOwner().equals(getPlayerIdentity())) {
                 for (int j = 0; j < this.hand.size(); j++) {
-                    if (currentBuilds.get(i).getSumVal() + cardSelected.getValue() == this.hand.get(j).getValue()
+                    int playedVal;
+                    if (this.hand.get(j).getType() == 'A') {
+                        playedVal = 1;
+                    } else {
+                        playedVal = this.hand.get(j).getValue();
+                    }
+                    if (currentBuilds.get(i).getSumVal() + cardSelected.getValue() == playedVal
                             && !currentBuilds.get(i).getIsMultiBuild()) {
                         if (makingMove) {
                             recommendedMove.setCardSelectedFromHand(this.hand.get(j));
@@ -409,7 +415,12 @@ public class Player {
         ArrayList<Card> tableCards = this.gameTable.getTableCards();
         ArrayList<Card> filteredCards = new ArrayList<>(tableCards);
 
-        int playedVal = cardPlayed.getValue();
+        int playedVal;
+        if (cardPlayed.getType() == 'A') {
+            playedVal = 1;
+        } else {
+            playedVal = cardPlayed.getValue();
+        }
 
         ArrayList<Card> buildCards = new ArrayList<>();
         buildCards.add(cardPlayed);
@@ -480,6 +491,7 @@ public class Player {
         }
 
         int playedVal = cardPlayed.getValue();
+
         ArrayList<Card> availCards = new ArrayList<>(this.gameTable.getTableCards());
         ArrayList<Card> capturableCards = new ArrayList<>();
 
@@ -561,7 +573,11 @@ public class Player {
     private int getSetValue(ArrayList<Card> set) {
         int sum = 0;
         for (int i = 0; i < set.size(); i++) {
-            sum += set.get(i).getValue();
+            if (set.get(i).getType() == 'A') {
+                sum += 1;
+            } else {
+                sum += set.get(i).getValue();
+            }
         }
 
         return sum;

@@ -163,4 +163,19 @@ public class Build {
         setSumVal(sum);
         this.buildOwner = newOwner;
     }
+
+    /**
+     * Gets size of total build
+     * @return int size of build card set
+     */
+    public int getBuildSize() {
+        int size = 0;
+        for (int i = 0; i < this.totalBuildCards.size(); i++) {
+            for (int j = 0; j < this.totalBuildCards.get(i).size(); j++) {
+                size++;
+            }
+        }
+
+        return size;
+    }
 }
