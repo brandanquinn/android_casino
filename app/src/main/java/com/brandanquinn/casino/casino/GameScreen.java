@@ -56,6 +56,13 @@ public class GameScreen extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener exitGameListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.exit(1);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -82,6 +89,9 @@ public class GameScreen extends AppCompatActivity {
 
         final Button deckButton = findViewById(R.id.deckButton);
         deckButton.setOnClickListener(deckOnClickListener);
+
+        final Button exitGame = findViewById(R.id.exitGame);
+        exitGame.setOnClickListener(exitGameListener);
 
         Bundle loadState = getIntent().getExtras();
 

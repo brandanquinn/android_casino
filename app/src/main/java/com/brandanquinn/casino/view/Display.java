@@ -281,7 +281,7 @@ public class Display {
         cardBtn.setTag(gameCard.getCardString());
 
         // Max width of table is 1268 dp
-        if (layoutId == "tableCards" && numCards > 8) {
+        if (layoutId == "tableCards" && numCards > 6) {
             int width = 1085 / numCards;
             cardBtn.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
         } else {

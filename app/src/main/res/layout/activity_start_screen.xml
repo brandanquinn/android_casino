@@ -141,6 +141,7 @@
         android:layout_marginBottom="8dp"
         android:background="#493267"
         android:text="Call the coin toss correctly to go first!"
+        android:textAlignment="center"
         android:textColor="#7bb3ff"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -724,7 +724,7 @@ public class Round {
         if (playedCard.getType() == 'A') {
             playedVal = 1;
         } else {
-            playedVal = playedCard.getType();
+            playedVal = playedCard.getValue();
         }
 
         if ((lockedCard.getValue() == playedVal + buildsSelected.get(0).getSumVal())

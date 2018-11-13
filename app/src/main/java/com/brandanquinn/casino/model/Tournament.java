@@ -199,6 +199,12 @@ public class Tournament {
     public void endRound() {
         this.roundsPlayed = this.currentRound.getRoundNum() + 1;
 
+        if (this.gamePlayers.get(0).getCapturedLast()) {
+            this.gamePlayers.get(0).addToPile(this.currentRound.getGameTable().getTableCards());
+        } else {
+            this.gamePlayers.get(1).addToPile(this.currentRound.getGameTable().getTableCards());
+        }
+
         computePlayerScores();
 
         if ((this.gamePlayers.get(0).getScore() >= WINNING_SCORE && this.gamePlayers.get(1).getScore() >= WINNING_SCORE)

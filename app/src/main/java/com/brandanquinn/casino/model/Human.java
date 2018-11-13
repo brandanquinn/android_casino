@@ -66,7 +66,7 @@ public class Human extends Player {
                     }
                 }
                 for (int j = 0; j < currentBuilds.size(); j++) {
-                    if (currentBuilds.get(j).getBuildString().equals(cardsSelectedFromTable.get(i))) {
+                    if (currentBuilds.get(j).getBuildStringForView().equals(cardsSelectedFromTable.get(i))) {
                         buildsSelected.add(currentBuilds.get(j));
                     }
                 }
