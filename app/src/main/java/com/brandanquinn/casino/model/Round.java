@@ -69,6 +69,14 @@ public class Round {
     }
 
     /**
+     * Getter for gameDeck private member variable.
+     * @return Deck obj used in current round.
+     */
+    public Deck getGameDeck() {
+        return gameDeck;
+    }
+
+    /**
      * Getter for gameTable private member variable
      * @return Table object holding cards / builds
      */

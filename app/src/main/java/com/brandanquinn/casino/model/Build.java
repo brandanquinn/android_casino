@@ -126,6 +126,30 @@ public class Build {
     }
 
     /**
+     * Used to create a stringified object to display on the build buttons.
+     * @return String version of build object pretty printed.
+     */
+    public String getBuildStringForView() {
+        String buildStr = "";
+
+        if (this.isMultiBuild) { buildStr += "[ "; }
+        for (int i = 0; i < this.totalBuildCards.size(); i++) {
+            for (int j = 0; j < this.totalBuildCards.get(i).size(); j++) {
+                if (j == 0) { buildStr += "[ "; }
+                buildStr += this.totalBuildCards.get(i).get(j).getCardString() + " ";
+            }
+            if (i != this.totalBuildCards.size() - 1) {
+                buildStr += "] \n";
+            } else {
+                buildStr += "] ";
+            }
+        }
+        if (this.isMultiBuild) { buildStr += "] "; }
+
+        return buildStr;
+    }
+
+    /**
      * Increase and claim an opponent's build.
      * @param increasingCard, Card object to increase build with.
      */

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,13 @@ public class GameScreen extends AppCompatActivity {
     private static TextView cardsSelection;
     private static AlertDialog selectFile;
 
+    private View.OnClickListener deckOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            deckClicked();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -71,6 +79,9 @@ public class GameScreen extends AppCompatActivity {
         clearSelection = findViewById(R.id.clearSelection);
         moveDisplay = findViewById(R.id.moveDisplay);
         cardsSelection = findViewById(R.id.cardsSelected);
+
+        final Button deckButton = findViewById(R.id.deckButton);
+        deckButton.setOnClickListener(deckOnClickListener);
 
         Bundle loadState = getIntent().getExtras();
 
@@ -141,6 +152,19 @@ public class GameScreen extends AppCompatActivity {
         }
 
         return tableSelectedString;
+    }
+
+    private void deckClicked() {
+        AlertDialog.Builder deckBuilder = new AlertDialog.Builder(context)
+                .setTitle("Game Deck")
+                .setMessage(tourney.getCurrentRound().getGameDeck().getDeckString())
+                .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog deck = deckBuilder.show();
     }
 
     /**
@@ -440,7 +464,7 @@ public class GameScreen extends AppCompatActivity {
      * Sets up the onClickListeners for the card buttons in hand and on the table
      */
     private static void setupCardButtons() {
-        ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
+        final ArrayList<ImageButton> myHand = gameDisplay.getHumanButtons();
         ArrayList<ImageButton> tableButtons = gameDisplay.getTableButtons();
         ArrayList<Button> buildButtons = gameDisplay.getBuildButtons();
 
@@ -517,16 +541,32 @@ public class GameScreen extends AppCompatActivity {
         gameDisplay.getHumanPile().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(context, gamePlayers.get(0).getPileString(), LENGTH_LONG);
-                toast.show();
+                AlertDialog.Builder humanPileBuilder = new AlertDialog.Builder(context)
+                        .setTitle("Human Pile")
+                        .setMessage(gamePlayers.get(0).getPileString())
+                        .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog humanPile = humanPileBuilder.show();
             }
         });
 
         gameDisplay.getComputerPile().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(context, gamePlayers.get(1).getPileString(), LENGTH_LONG);
-                toast.show();
+                AlertDialog.Builder computerPileBuilder = new AlertDialog.Builder(context)
+                        .setTitle("Computer Pile")
+                        .setMessage(gamePlayers.get(1).getPileString())
+                        .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog computerPile = computerPileBuilder.show();
             }
         });
     }

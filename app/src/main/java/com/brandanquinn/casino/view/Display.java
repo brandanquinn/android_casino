@@ -161,7 +161,7 @@ public class Display {
 
         for (int i = 0; i < currentBuilds.size(); i++) {
             ArrayList<ArrayList<Card>> buildCards = currentBuilds.get(i).getTotalBuildCards();
-            tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildString()));
+            tableGrid.addView(createBuildButton(buildCards, cardNum, currentBuilds.get(i).getBuildStringForView(), currentBuilds.get(i).getBuildString()));
         }
         for (int i = 0; i < tableCards.size(); i++) {
             tableGrid.addView(createButton(tableCards.get(i), "tableCards", cardNum));
@@ -194,7 +194,7 @@ public class Display {
      * @param numCards
      * @return
      */
-    private Button createBuildButton(ArrayList<ArrayList<Card>> buildCards, int numCards, String buildString) {
+    private Button createBuildButton(ArrayList<ArrayList<Card>> buildCards, int numCards, String buildString, String tagString) {
         Button buildButton = new Button(appContext);
         buildButton.setTag(buildString);
 
@@ -208,14 +208,17 @@ public class Display {
             buildButton.setText("Build of: \n" + buildString);
         }
 
-        if (numCards > 8) {
-            int width = 1268 / numCards;
+        LinearLayout.LayoutParams params;
+        if (numCards > 6) {
+            int width = 1085 / numCards;
             buildButton.setWidth(width);
-            buildButton.setLayoutParams(new LinearLayout.LayoutParams(width, 180));
+            params = new LinearLayout.LayoutParams(width, 180);
         } else {
             buildButton.setWidth(150);
-            buildButton.setLayoutParams(new LinearLayout.LayoutParams(150, 180));
+            params = new LinearLayout.LayoutParams(150, 180);
         }
+        params.setMargins(10, 0, 10, 0);
+        buildButton.setLayoutParams(params);
         buildButton.setHeight(180);
 
         buildButtons.add(buildButton);
@@ -333,6 +336,9 @@ public class Display {
         moveLog.setText(previousMove);
     }
 
+    // These next 4 functions are referenced from: https://developer.android.com/topic/performance/graphics/load-bitmap
+    // In order to fix a Java out of memory error when loading the card images.
+
     /**
      * Used to optimize memory storage to try to prevent Java out of memory error.
      * @param imageView, ImageView created for computer player's hand.
@@ -399,6 +405,13 @@ public class Display {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    /**
+     * Used to specifically scale the Bitmap images to the required size.
+     * @param options, Bitmap factory options set in function above.
+     * @param reqWidth, Required width for the View
+     * @param reqHeight, Required height for the View
+     * @return int sample size used to construct the Bitmap.
+     */
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
 
