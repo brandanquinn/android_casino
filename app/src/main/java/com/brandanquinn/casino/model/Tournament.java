@@ -367,7 +367,11 @@ public class Tournament {
 
         int buildSum = 0;
         for (int i = 0; i < buildCards.size(); i++) {
-            buildSum += buildCards.get(i).getValue();
+            if (buildCards.get(i).getType() == 'A') {
+                buildSum += 1;
+            } else {
+                buildSum += buildCards.get(i).getValue();
+            }
         }
 
         if (bracketCounter > 1) {

@@ -550,7 +550,9 @@ public class Round {
         }
 
         for (int i = 0; i < capturableBuilds.size(); i++) {
-            capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
+            if (makingMove) {
+                capturableBuilds.get(i).getSumCard().setLockedToBuild(false);
+            }
             ArrayList<ArrayList<Card>> tempBuildCards = capturableBuilds.get(i).getTotalBuildCards();
             for (int j = 0; j < tempBuildCards.size(); j++) {
                 pileAdditions.addAll(tempBuildCards.get(j));

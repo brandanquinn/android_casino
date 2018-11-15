@@ -387,12 +387,19 @@ public class Player {
 
         if (cardSelected.getLockedToBuild()) {
             for (int i = 0; i < this.hand.size(); i++) {
-                possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), true, makingMove));
+                if (this.hand.get(i).getCardString().equals(cardSelected.getCardString()) || this.hand.get(i).getLockedToBuild()) {
+                    possibleBuildVals.add(0);
+                } else {
+                    possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), true, makingMove));
+                }
             }
         } else {
             for (int i = 0; i < this.hand.size(); i++) {
-                possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), false, makingMove));
-            }
+                if (this.hand.get(i).getCardString().equals(cardSelected.getCardString()) || this.hand.get(i).getLockedToBuild()) {
+                    possibleBuildVals.add(0);
+                } else {
+                    possibleBuildVals.add(createBuilds(cardSelected, this.hand.get(i), false, makingMove));
+                }            }
         }
 
         return possibleBuildVals.get(getMaxScoreIdx(possibleBuildVals));
