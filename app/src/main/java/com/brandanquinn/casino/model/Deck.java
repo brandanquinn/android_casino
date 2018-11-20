@@ -71,7 +71,7 @@ public class Deck {
      * Gets the current number of cards left in the deck.
      * @return int value as size of deck.
      */
-    public int getNumCardsLeft() {
+    public final int getNumCardsLeft() {
         return this.gameDeck.size();
     }
 
@@ -79,7 +79,7 @@ public class Deck {
      * Stringifies the current deck for serialization / logging purposes.
      * @return
      */
-    public String getDeckString() {
+    public final String getDeckString() {
         String deckStr = "";
 
         for (int i = 0; i < this.gameDeck.size(); i++) {

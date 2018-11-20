@@ -36,7 +36,7 @@ public class Table {
      * Getter for tableCards private member variable.
      * @return ArrayList of loose table cards
      */
-    public ArrayList<Card> getTableCards() {
+    public final ArrayList<Card> getTableCards() {
         return this.tableCards;
     }
 
@@ -44,7 +44,7 @@ public class Table {
      * Getter for tableBuilds private member variable
      * @return 2d ArrayList of all cards in table builds.
      */
-    public ArrayList<ArrayList<Card>> getTableBuilds() {
+    public final ArrayList<ArrayList<Card>> getTableBuilds() {
         return this.tableBuilds;
     }
 
@@ -52,13 +52,13 @@ public class Table {
      * Getter for currentBuilds private member variable
      * @return ArrayList of Build objects on the table.
      */
-    public ArrayList<Build> getCurrentBuilds() { return this.currentBuilds; }
+    public final ArrayList<Build> getCurrentBuilds() { return this.currentBuilds; }
 
     /**
      * Combines loose tableCards list with tableBuilds list to get full list of cards on the table.
      * @return 2d ArrayList of all cards on the table.
      */
-    public ArrayList<ArrayList<Card>> getTotalTableCards() {
+    public final ArrayList<ArrayList<Card>> getTotalTableCards() {
         ArrayList<ArrayList<Card>> tempVec = new ArrayList<>(this.tableBuilds);
         tempVec.add(this.tableCards);
 
@@ -170,9 +170,9 @@ public class Table {
 
     /**
      * Generate a stringified table object for serialization.
-     * @return
+     * @return Stringified table object.
      */
-    public String getTableString() {
+    public final String getTableString() {
         String tableStr = "";
 
         for (int i = 0; i < this.currentBuilds.size(); i++) {

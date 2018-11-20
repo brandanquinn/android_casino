@@ -32,7 +32,7 @@ public class Build {
      * Getter for private member variable isMultiBuild
      * @return, boolean value representing whether or not build is a multibuild
      */
-    public boolean getIsMultiBuild() { return this.isMultiBuild; }
+    public final boolean getIsMultiBuild() { return this.isMultiBuild; }
 
     /**
      * Setter for private member variable isMultiBuild
@@ -44,7 +44,7 @@ public class Build {
      * Getter for private member variable sumVal
      * @return int value that the build cards sum to.
      */
-    public int getSumVal() { return this.sumVal; }
+    public final int getSumVal() { return this.sumVal; }
 
     /**
      * Setter for private member variable sumVal
@@ -56,7 +56,7 @@ public class Build {
      * Getter for private member variable sumCard
      * @return Card object that the build is locked to.
      */
-    public Card getSumCard() { return this.sumCard; }
+    public final Card getSumCard() { return this.sumCard; }
 
     /**
      * Setter for private member variable sumCard
@@ -68,13 +68,13 @@ public class Build {
      * Getter for private member variable totalBuildCards
      * @return ArrayList of total cards involved in the build.
      */
-    public ArrayList<ArrayList<Card>> getTotalBuildCards() { return this.totalBuildCards; }
+    public final ArrayList<ArrayList<Card>> getTotalBuildCards() { return this.totalBuildCards; }
 
     /**
      * Getter for private member variable buildOwner
      * @return String representing which player currently owns the build.
      */
-    public String getBuildOwner() { return this.buildOwner; }
+    public final String getBuildOwner() { return this.buildOwner; }
 
     /**
      * Used to extend a single build object to a multibuild
@@ -89,7 +89,7 @@ public class Build {
      * Used to create a Stringified build object with owner for seriailization.
      * @return String version of build object + buildOwner
      */
-    public String getBuildStringWithOwner() {
+    public final String getBuildStringWithOwner() {
         String buildStr = "";
 
         if (this.isMultiBuild) { buildStr += "[ "; }
@@ -109,7 +109,7 @@ public class Build {
      * Used to create a Stringified build object for view / logging purposes.
      * @return String version of build object
      */
-    public String getBuildString() {
+    public final String getBuildString() {
         String buildStr = "";
 
         if (this.isMultiBuild) { buildStr += "[ "; }
@@ -129,7 +129,7 @@ public class Build {
      * Used to create a stringified object to display on the build buttons.
      * @return String version of build object pretty printed.
      */
-    public String getBuildStringForView() {
+    public final String getBuildStringForView() {
         String buildStr = "";
 
         if (this.isMultiBuild) { buildStr += "[ "; }

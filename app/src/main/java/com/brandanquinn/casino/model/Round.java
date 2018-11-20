@@ -56,7 +56,7 @@ public class Round {
      * Getter for gamePlayers private member variable.
      * @return ArrayList of game player objects.
      */
-    public ArrayList<Player> getGamePlayers() {
+    public final ArrayList<Player> getGamePlayers() {
         return this.gamePlayers;
     }
 
@@ -64,7 +64,7 @@ public class Round {
      * Getter for roundNum private member variable
      * @return int current round number.
      */
-    public int getRoundNum() {
+    public final int getRoundNum() {
         return roundNum;
     }
 
@@ -72,7 +72,7 @@ public class Round {
      * Getter for gameDeck private member variable.
      * @return Deck obj used in current round.
      */
-    public Deck getGameDeck() {
+    public final Deck getGameDeck() {
         return gameDeck;
     }
 
@@ -80,7 +80,7 @@ public class Round {
      * Getter for gameTable private member variable
      * @return Table object holding cards / builds
      */
-    public Table getGameTable() {
+    public final Table getGameTable() {
         return this.gameTable;
     }
 
@@ -88,7 +88,7 @@ public class Round {
      * Getter for previosuMove private member variable
      * @return String representing the previous move made by player.
      */
-    public String getPreviousMove() {
+    public final String getPreviousMove() {
         return previousMove;
     }
 
@@ -96,7 +96,7 @@ public class Round {
      * Getter for recommendedMove private member variable
      * @return String rerpresenting the AI recommended move for player.
      */
-    public String getRecommendedMove() {
+    public final String getRecommendedMove() {
         return recommendedMove;
     }
 
@@ -161,7 +161,7 @@ public class Round {
      * Get Player who is currently playing.
      * @return Player who's turn it is.
      */
-    public Player getCurrentPlayer() {
+    public final Player getCurrentPlayer() {
         for (int i = 0; i < this.gamePlayers.size(); i++) {
             if (gamePlayers.get(i).getIsPlaying()) {
                 return gamePlayers.get(i);
@@ -400,6 +400,10 @@ public class Round {
         boolean extendingBuild = false;
 
         if (lockedCard.getLockedToBuild()) { extendingBuild = true; }
+
+        if (!lockedCard.getIsRealCard() || !playedCard.getIsRealCard()) {
+            return false;
+        }
 
         int selectedVal = lockedCard.getValue();
         int playedVal;

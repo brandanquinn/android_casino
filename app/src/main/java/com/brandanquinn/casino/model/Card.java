@@ -60,7 +60,7 @@ public class Card {
      * Getter for the suit private member variable
      * @return char suit
      */
-    public char getSuit() {
+    public final char getSuit() {
         return this.suit;
     }
 
@@ -76,7 +76,7 @@ public class Card {
      * Getter for the type private member variable
      * @return char type
      */
-    public char getType() {
+    public final char getType() {
         return this.type;
     }
 
@@ -92,7 +92,7 @@ public class Card {
      * Getter for the value private member variable
      * @return int value of each card
      */
-    public int getValue() {
+    public final int getValue() {
         return this.value;
     }
 
@@ -107,7 +107,7 @@ public class Card {
      * Generates a stringified Card object
      * @return String cardString
      */
-    public String getCardString() {
+    public final String getCardString() {
         String cardString = "" + getSuit() + getType();
         return cardString;
     }
@@ -116,7 +116,7 @@ public class Card {
      * Generates the file resource name for each Card.
      * @return String File resource name
      */
-    public String getImageResourceName() {
+    public final String getImageResourceName() {
         return "" + Character.toLowerCase(getSuit()) + "_" + Character.toLowerCase(getType());
     }
 
@@ -124,7 +124,7 @@ public class Card {
      * Getter for lockedToBuild private member variable.
      * @return boolean representing whether or not the Card is currently the capture card for a build.
      */
-    public boolean getLockedToBuild() {
+    public final boolean getLockedToBuild() {
         return this.lockedToBuild;
     }
 
@@ -140,7 +140,7 @@ public class Card {
      * Getter for partOfBuild private member variable
      * @return boolean representing whether or not the Card is currently part of a build on the table.
      */
-    public boolean getPartOfBuild() {
+    public final boolean getPartOfBuild() {
         return this.partOfBuild;
     }
 
@@ -172,7 +172,7 @@ public class Card {
      * Getter for isRealCard private member variable
      * @return boolean variable representing whether or not a card is real.
      */
-    public boolean getIsRealCard() {
+    public final boolean getIsRealCard() {
         return this.isRealCard;
     }
 }

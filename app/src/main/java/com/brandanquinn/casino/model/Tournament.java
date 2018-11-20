@@ -26,6 +26,8 @@ public class Tournament {
     private String humanFinalPile, computerFinalPile;
     private int humanPileSize, computerPileSize, humanSpades, computerSpades;
     private int humanOldSCore, computerOldScore;
+    private String remainingTableCards;
+    private String lastCapturer;
 
     /**
      * Default constructor for the Tournament class
@@ -44,7 +46,7 @@ public class Tournament {
      * Getter for currentRound private member variable
      * @return Round object that is currently being played in.
      */
-    public Round getCurrentRound() {
+    public final Round getCurrentRound() {
         return this.currentRound;
     }
 
@@ -52,7 +54,7 @@ public class Tournament {
      * Getter for winningPlayer private member variable
      * @return String representing the player that won the tournament, empty if tournament is still being played.
      */
-    public String getWinningPlayer() {
+    public final String getWinningPlayer() {
         return winningPlayer;
     }
 
@@ -198,12 +200,17 @@ public class Tournament {
      */
     public void endRound() {
         this.roundsPlayed = this.currentRound.getRoundNum() + 1;
+        this.remainingTableCards = "";
+        this.lastCapturer = "";
 
         if (this.gamePlayers.get(0).getCapturedLast()) {
             this.gamePlayers.get(0).addToPile(this.currentRound.getGameTable().getTableCards());
+            lastCapturer = gamePlayers.get(0).getPlayerIdentity();
         } else {
             this.gamePlayers.get(1).addToPile(this.currentRound.getGameTable().getTableCards());
+            lastCapturer = gamePlayers.get(1).getPlayerIdentity();
         }
+        this.remainingTableCards = this.currentRound.getGameTable().getTableString();
 
         computePlayerScores();
 
@@ -514,6 +521,7 @@ public class Tournament {
      */
     public String generateEndOfRoundReport() {
         String report = "";
+        report += this.lastCapturer + " receives remaining table cards: " + this.remainingTableCards + '\n';
         report += "Human final pile: " + humanFinalPile + '\n';
         report += "Computer final pile: " + computerFinalPile + '\n';
         report += "Human pile size: " + humanPileSize + '\n';

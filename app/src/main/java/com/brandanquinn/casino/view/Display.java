@@ -47,7 +47,7 @@ public class Display {
      * Getter for fileButtons private member variable
      * @return ArrayList of fileButtons generated for save file selection.
      */
-    public ArrayList<Button> getFileButtons() {
+    public final ArrayList<Button> getFileButtons() {
         return fileButtons;
     }
 
@@ -55,34 +55,29 @@ public class Display {
      * Getter for humanButtons private member variable
      * @return ArrayList of buttons in human's hand
      */
-    public ArrayList<ImageButton> getHumanButtons() {
+    public final ArrayList<ImageButton> getHumanButtons() {
         return this.humanButtons;
     }
-
-    /**
-     * Getter for computerButtons private member variable
-     * @return ArrayList of buttons in the computer's hand
-    /
 
     /**
      * Getter for tableButtons private member variable
      * @return ArrayList of buttons on the table
      */
-    public ArrayList<ImageButton> getTableButtons() { return this.tableButtons; }
+    public final ArrayList<ImageButton> getTableButtons() { return this.tableButtons; }
 
-    public ArrayList<Button> getBuildButtons() { return this.buildButtons; }
+    public final ArrayList<Button> getBuildButtons() { return this.buildButtons; }
 
     /**
      * Getter for humanPile private member variable
      * @return Button to display human pile
      */
-    public Button getHumanPile() { return this.humanPile; }
+    public final Button getHumanPile() { return this.humanPile; }
 
     /**
      * Getter for computerPile private member variable
      * @return Button to display computer pile
      */
-    public Button getComputerPile() { return this.computerPile; }
+    public final Button getComputerPile() { return this.computerPile; }
 
     /**
      * Updates the various view components using information from the model.
@@ -263,7 +258,6 @@ public class Display {
         // Programmatically create and return an ImageButton based on card passed.
         // Whenever ImageButton is created, add it to currentButtons list
 
-        System.out.println("CREATE BUTTON CALLED");
         // Initializing ImageButton and basic resources
         ImageButton cardBtn = new ImageButton(appContext);
 

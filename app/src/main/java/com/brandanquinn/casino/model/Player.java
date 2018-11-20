@@ -37,7 +37,7 @@ public class Player {
      * Getter for score private member variable.
      * @return int score of player
      */
-    public int getScore() {
+    public final int getScore() {
         return this.score;
     }
 
@@ -77,7 +77,7 @@ public class Player {
      * Getter for pile private member variable.
      * @return ArrayList of Card objects in player's pile.
      */
-    public ArrayList<Card> getPile() {
+    public final ArrayList<Card> getPile() {
         return this.pile;
     }
 
@@ -93,7 +93,7 @@ public class Player {
      * Getter for hand private member variable.
      * @return ArrayList of Card objects in player's hand.
      */
-    public ArrayList<Card> getHand() {
+    public final ArrayList<Card> getHand() {
         return this.hand;
     }
 
@@ -133,7 +133,7 @@ public class Player {
      * Stringified version of player's hand for serialization / logging purposes.
      * @return String of Cards in player's hand.
      */
-    public String getHandString() {
+    public final String getHandString() {
         String handString = " ";
 
         for (int i = 0; i < hand.size(); i++) {
@@ -147,7 +147,7 @@ public class Player {
      * Gets a stringified version of player's pile for serialization / logging purposes
      * @return String of cards in player's pile.
      */
-    public String getPileString() {
+    public final String getPileString() {
         String pileString = " ";
 
         if (pile.isEmpty()) {
@@ -255,7 +255,7 @@ public class Player {
      * Getter for isPlaying private member variable.
      * @return boolean value representing whether or not player is currently playing.
      */
-    public boolean getIsPlaying() {
+    public final boolean getIsPlaying() {
         return this.isPlaying;
     }
 
@@ -279,7 +279,7 @@ public class Player {
      * Getter for gameTable private member variable
      * @return Table object for all cards / builds on the table.
      */
-    public Table getGameTable() {
+    public final Table getGameTable() {
         return this.gameTable;
     }
 
@@ -295,7 +295,7 @@ public class Player {
      * Getter for capturedLast private member variable
      * @return boolean value representing whether or not player captured last.
      */
-    public boolean getCapturedLast() {
+    public final boolean getCapturedLast() {
         return this.capturedLast;
     }
 

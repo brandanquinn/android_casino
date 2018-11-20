@@ -45,7 +45,7 @@ public class Move {
      * Getter for moveType private member variable
      * @return String move type
      */
-    public String getMoveType() { return this.moveType; }
+    public final String getMoveType() { return this.moveType; }
 
     /**
      * Setter for moveType private member variable
@@ -59,7 +59,7 @@ public class Move {
      * Getter for cardSelectedFromHand private member variable
      * @return Card object selected from hand
      */
-    public Card getCardSelectedFromHand() { return this.cardSelectedFromHand; }
+    public final Card getCardSelectedFromHand() { return this.cardSelectedFromHand; }
 
     /**
      * Setter for cardSelectedFromHand private member variable
@@ -73,7 +73,7 @@ public class Move {
      * Getter for cardPlayedFromHand private member variable
      * @return Card object played from hand
      */
-    public Card getCardPlayedFromHand() {
+    public final Card getCardPlayedFromHand() {
         return cardPlayedFromHand;
     }
 
@@ -89,7 +89,7 @@ public class Move {
      * Getter for cardsSelectedFromTable private member variable
      * @return ArrayList of Card objects selected from the table
      */
-    public ArrayList<Card> getCardsSelectedFromTable() {
+    public final ArrayList<Card> getCardsSelectedFromTable() {
         return cardsSelectedFromTable;
     }
 
@@ -105,7 +105,7 @@ public class Move {
      * Getter for buildsSelectedFromTable private member variable
      * @return ArrayList of Build objects selected from the table
      */
-    public ArrayList<Build> getBuildsSelectedFromTable() {
+    public final ArrayList<Build> getBuildsSelectedFromTable() {
         return buildsSelectedFromTable;
     }
 
